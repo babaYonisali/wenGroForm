@@ -19,15 +19,28 @@ if (!MONGODB_URI) {
     process.exit(1);
 }
 
+// Add connection timeout and better error handling
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 5000, // 5 second timeout
+    socketTimeoutMS: 45000, // 45 second timeout
+    connectTimeoutMS: 10000, // 10 second timeout
+    maxPoolSize: 10
 });
 
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.on('error', (error) => {
+    console.error('❌ MongoDB connection error:', error);
+});
+db.on('connected', () => {
+    console.log('✅ Connected to MongoDB');
+});
+db.on('disconnected', () => {
+    console.log('❌ Disconnected from MongoDB');
+});
 db.once('open', () => {
-    console.log('Connected to MongoDB');
+    console.log('🚀 MongoDB connection established');
 });
 
 // User Schema

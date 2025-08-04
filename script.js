@@ -40,7 +40,10 @@ async function handleUserEntry(e) {
         btnText.textContent = 'Registering...';
         submitBtn.disabled = true;
         
-        // Send data to backend
+        // Send data to backend with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
         const response = await fetch('/api/users', {
             method: 'POST',
             headers: {
@@ -50,8 +53,11 @@ async function handleUserEntry(e) {
                 xHandle: xHandle,
                 telegramHandle: telegramHandle,
                 xHandleReferral: referrerHandle || null
-            })
+            }),
+            signal: controller.signal
         });
+        
+        clearTimeout(timeoutId);
         
         const data = await response.json();
         
@@ -81,7 +87,16 @@ async function handleUserEntry(e) {
         
     } catch (error) {
         console.error('Registration error:', error);
-        showNotification(error.message || 'Registration failed. Please try again.', 'error');
+        
+        let errorMessage = 'Registration failed. Please try again.';
+        
+        if (error.name === 'AbortError') {
+            errorMessage = 'Request timed out. Please check your connection and try again.';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        showNotification(errorMessage, 'error');
         
         // Reset button
         const submitBtn = userEntryForm.querySelector('.submit-btn');
