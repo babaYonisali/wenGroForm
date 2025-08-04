@@ -59,6 +59,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: false
     },
+    hasKaitoYaps: {
+        type: Boolean,
+        default: false
+    },
     joinTime: {
         type: Date,
         default: Date.now
@@ -89,7 +93,7 @@ app.get('/api/users', async (req, res) => {
 // POST - Add a new user
 app.post('/api/users', async (req, res) => {
     try {
-        const { xHandle, telegramHandle, xHandleReferral } = req.body;
+        const { xHandle, telegramHandle, xHandleReferral, kaitoYaps } = req.body;
 
         // Validate required fields
         if (!xHandle || !telegramHandle) {
@@ -118,7 +122,8 @@ app.post('/api/users', async (req, res) => {
         const user = new User({
             xHandle: xHandle.toLowerCase(),
             telegramHandle: telegramHandle.toLowerCase(),
-            xHandleReferral: xHandleReferral ? xHandleReferral.toLowerCase() : null
+            xHandleReferral: xHandleReferral ? xHandleReferral.toLowerCase() : null,
+            hasKaitoYaps: kaitoYaps === true
         });
 
         await user.save();

@@ -246,6 +246,121 @@ body {
     box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
 }
 
+/* Yes/No Toggle styles */
+.yes-no-toggle {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.toggle-input {
+    display: none;
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.toggle-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.yes-btn::before {
+    background: linear-gradient(45deg, #00ff88, #00cc6a);
+}
+
+.no-btn::before {
+    background: linear-gradient(45deg, #ff4757, #ff3742);
+}
+
+.toggle-text {
+    position: relative;
+    z-index: 1;
+    color: #ccc;
+    transition: color 0.3s ease;
+}
+
+.toggle-icon {
+    position: relative;
+    z-index: 1;
+    font-size: 14px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+/* Hover effects */
+.yes-btn:hover {
+    border-color: #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.no-btn:hover {
+    border-color: #ff4757;
+    box-shadow: 0 0 15px rgba(255, 71, 87, 0.3);
+}
+
+/* Selected states */
+.toggle-input:checked + .yes-btn::before {
+    opacity: 1;
+}
+
+.toggle-input:checked + .yes-btn .toggle-text {
+    color: #000;
+    font-weight: 700;
+}
+
+.toggle-input:checked + .yes-btn .toggle-icon {
+    opacity: 1;
+}
+
+.toggle-input:checked + .yes-btn {
+    border-color: #00ff88;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    transform: scale(1.02);
+}
+
+.toggle-input:checked + .no-btn::before {
+    opacity: 1;
+}
+
+.toggle-input:checked + .no-btn .toggle-text {
+    color: #000;
+    font-weight: 700;
+}
+
+.toggle-input:checked + .no-btn .toggle-icon {
+    opacity: 1;
+}
+
+.toggle-input:checked + .no-btn {
+    border-color: #ff4757;
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.5);
+    transform: scale(1.02);
+}
+
 /* Submit button */
 .submit-btn {
     width: 100%;
@@ -499,6 +614,13 @@ body {
     }
     50% {
         background-position: 100% 50%;
+    }
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
     }
 }
 
