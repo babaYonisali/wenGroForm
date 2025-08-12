@@ -33,6 +33,15 @@ async function handleUserEntry(e) {
         showNotification('Please fill in all required fields', 'error');
         return;
     }
+    if (!xHandle.startsWith('@')) {
+        xHandle = '@' + xHandle;
+    }
+    if (!telegramHandle.startsWith('@')) {
+        telegramHandle = '@' + telegramHandle;
+    }
+    if(referrerHandle && !referrerHandle.startsWith('@')) {
+        referrerHandle = '@' + referrerHandle;
+    }
     
     try {
         // Show loading state
@@ -237,7 +246,7 @@ function displayAllUsers(users) {
         html += `
             <div class="message">
                 <div class="message-header">
-                    <span class="${userClass}">${highlight}@${user.xHandle}</span>
+                    <span class="${userClass}">${highlight}${user.xHandle}</span>
                     <span class="message-time">${joinDate}</span>
                 </div>
                 <div class="message-content">
