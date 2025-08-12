@@ -23,9 +23,9 @@ async function handleUserEntry(e) {
     e.preventDefault();
     
     const formData = new FormData(userEntryForm);
-    const xHandle = formData.get('xHandle').trim();
-    const telegramHandle = formData.get('telegramHandle').trim();
-    const referrerHandle = formData.get('referrerHandle').trim();
+    let xHandle = formData.get('xHandle').trim();
+    let telegramHandle = formData.get('telegramHandle').trim();
+    let referrerHandle = formData.get('referrerHandle').trim();
     const kaitoYaps = formData.get('kaitoYaps') === 'yes';
     
     // Validate required fields
