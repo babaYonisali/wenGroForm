@@ -250,8 +250,8 @@ function displayAllUsers(users) {
                     <span class="message-time">${joinDate}</span>
                 </div>
                 <div class="message-content">
-                    📱 @${user.telegramHandle}
-                    ${user.xHandleReferral ? `<br>👥 Referred by: @${user.xHandleReferral}` : ''}
+                    📱 ${user.telegramHandle}
+                    ${user.xHandleReferral ? `<br>👥 Referred by: ${user.xHandleReferral}` : ''}
                     ${user.hasKaitoYaps ? `<br>🎵 Has Kaito Yaps` : ''}
                 </div>
             </div>
