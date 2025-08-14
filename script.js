@@ -130,11 +130,10 @@ async function handleLinkSubmission(e) {
     
     const formData = new FormData(linkSubmissionForm);
     const link = formData.get('submissionLink').trim();
-    const magicWord = formData.get('magicWord').trim();
     
     // Validate required fields
-    if (!link || !magicWord) {
-        showLinkSubmissionResult('Please fill in all fields', 'error');
+    if (!link) {
+        showLinkSubmissionResult('Please fill in the link field', 'error');
         return;
     }
     
@@ -161,7 +160,6 @@ async function handleLinkSubmission(e) {
             },
             body: JSON.stringify({
                 link: link,
-                magicWord: magicWord,
                 submittedAt: new Date().toISOString()
             })
         });
@@ -173,7 +171,7 @@ async function handleLinkSubmission(e) {
         }
         
         // Show success result
-        showLinkSubmissionResult('Link submitted successfully!', 'success', link, magicWord);
+        showLinkSubmissionResult('Link submitted successfully!', 'success', link);
         
         // Reset form
         linkSubmissionForm.reset();
@@ -196,21 +194,17 @@ async function handleLinkSubmission(e) {
     }
 }
 
-function showLinkSubmissionResult(message, type, link = null, magicWord = null) {
+function showLinkSubmissionResult(message, type, link = null) {
     submissionResults.className = `submission-results ${type}`;
     
     let html = `<h3>${type === 'success' ? '✅ Success!' : '❌ Error'}</h3>`;
     html += `<p>${message}</p>`;
     
-    if (type === 'success' && link && magicWord) {
+    if (type === 'success' && link) {
         html += `
             <div class="submitted-link">
                 <strong>Submitted Link:</strong><br>
                 <a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>
-            </div>
-            <div class="submitted-link">
-                <strong>Magic Word:</strong><br>
-                <span style="color: #ffd700; font-weight: 600;">${magicWord}</span>
             </div>
         `;
     }

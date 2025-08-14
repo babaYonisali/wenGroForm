@@ -78,10 +78,6 @@ const submissionSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    magicWord: {
-        type: String,
-        required: true
-    },
     submittedAt: {
         type: Date,
         default: Date.now
@@ -185,13 +181,13 @@ app.get('/api/submissions', async (req, res) => {
 // POST - Add a new submission
 app.post('/api/submissions', async (req, res) => {
     try {
-        const { link, magicWord, submittedAt } = req.body;
+        const { link, submittedAt } = req.body;
 
         // Validate required fields
-        if (!link || !magicWord) {
+        if (!link) {
             return res.status(400).json({
                 success: false,
-                message: 'Link and Magic Word are required'
+                message: 'Link is required'
             });
         }
 
@@ -217,7 +213,6 @@ app.post('/api/submissions', async (req, res) => {
         // Create new submission
         const submission = new Submission({
             link: link,
-            magicWord: magicWord,
             submittedAt: submittedAt || new Date()
         });
 
