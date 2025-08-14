@@ -111,6 +111,57 @@
 
         </main>
 
+        <!-- New Link Submission Section -->
+        <div class="link-submission-section">
+            <div class="section-header">
+                <h2>🔗 Lombard Thread Constest Submission</h2>
+                <p>Share something interesting with the community</p>
+            </div>
+            
+            <form id="linkSubmissionForm" class="link-submission-form">
+                <div class="form-group">
+                    <label for="submissionLink" class="form-label">
+                        <span class="label-icon">🔗</span>
+                        Link
+                    </label>
+                    <input 
+                        type="url" 
+                        id="submissionLink" 
+                        name="submissionLink" 
+                        class="form-input"
+                        placeholder="https://example.com"
+                        required
+                    >
+                    <div class="input-glow"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="magicWord" class="form-label">
+                        <span class="label-icon">✨</span>
+                        Magic Word
+                    </label>
+                    <input 
+                        type="text" 
+                        id="magicWord" 
+                        name="magicWord" 
+                        class="form-input"
+                        placeholder="Enter your magic word"
+                        required
+                    >
+                    <div class="input-glow"></div>
+                </div>
+
+                <button type="submit" class="submit-btn link-submit-btn">
+                    <span class="btn-text">Submit Link</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </form>
+
+            <div id="submissionResults" class="submission-results hidden">
+                <!-- Results will be displayed here -->
+            </div>
+        </div>
+
         <div id="forumSection" class="forum-section hidden">
             <div class="forum-header">
                 <h2>WenGro Greenhouse</h2>

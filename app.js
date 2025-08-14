@@ -71,6 +71,28 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// Submission Schema
+const submissionSchema = new mongoose.Schema({
+    link: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    magicWord: {
+        type: String,
+        required: true
+    },
+    submittedAt: {
+        type: Date,
+        default: Date.now
+    }
+});
+
+const Submission = mongoose.model('Submission', submissionSchema);
+
+// Create unique index on link field
+submissionSchema.index({ link: 1 }, { unique: true });
+
 // Routes
 
 // GET - Retrieve all users
@@ -143,6 +165,88 @@ app.post('/api/users', async (req, res) => {
     }
 });
 
+// GET - Retrieve all submissions
+app.get('/api/submissions', async (req, res) => {
+    try {
+        const submissions = await Submission.find().sort({ submittedAt: -1 });
+        res.json({
+            success: true,
+            data: submissions
+        });
+    } catch (error) {
+        console.error('Error fetching submissions:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching submissions'
+        });
+    }
+});
+
+// POST - Add a new submission
+app.post('/api/submissions', async (req, res) => {
+    try {
+        const { link, magicWord, submittedAt } = req.body;
+
+        // Validate required fields
+        if (!link || !magicWord) {
+            return res.status(400).json({
+                success: false,
+                message: 'Link and Magic Word are required'
+            });
+        }
+
+        // Validate URL format
+        try {
+            new URL(link);
+        } catch {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide a valid URL'
+            });
+        }
+
+        // Check if link already exists
+        const existingSubmission = await Submission.findOne({ link: link });
+        if (existingSubmission) {
+            return res.status(400).json({
+                success: false,
+                message: 'This link has already been submitted. Please submit a different link.'
+            });
+        }
+
+        // Create new submission
+        const submission = new Submission({
+            link: link,
+            magicWord: magicWord,
+            submittedAt: submittedAt || new Date()
+        });
+
+        await submission.save();
+
+        res.status(201).json({
+            success: true,
+            message: 'Submission added successfully',
+            data: submission
+        });
+
+    } catch (error) {
+        console.error('Error adding submission:', error);
+        
+        // Handle duplicate link error (fallback for race conditions)
+        if (error.code === 11000 && error.keyPattern && error.keyPattern.link) {
+            return res.status(400).json({
+                success: false,
+                message: 'This link has already been submitted. Please submit a different link.'
+            });
+        }
+        
+        res.status(500).json({
+            success: false,
+            message: 'Error adding submission'
+        });
+    }
+});
+
 // Serve the main HTML file
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
@@ -154,7 +258,9 @@ app.get('/api', (req, res) => {
         message: 'WenGro Forum API',
         endpoints: {
             'GET /api/users': 'Get all users',
-            'POST /api/users': 'Add new user'
+            'POST /api/users': 'Add new user',
+            'GET /api/submissions': 'Get all submissions',
+            'POST /api/submissions': 'Add new submission'
         }
     });
 });

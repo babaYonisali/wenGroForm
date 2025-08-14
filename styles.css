@@ -679,3 +679,117 @@ body {
 .messages::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(45deg, #ffed4e, #fff200);
 } 
+
+/* Link Submission Section Styles */
+.link-submission-section {
+    margin-top: 80px;
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(255, 215, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 1s ease-out 0.5s both;
+}
+
+.link-submission-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #ffd700, #ffed4e, #fff200, #ffb347);
+    animation: gradient 3s ease infinite;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section-header h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: #ffd700;
+}
+
+.section-header p {
+    color: #888;
+    font-size: 1rem;
+}
+
+.link-submission-form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.link-submit-btn {
+    background: linear-gradient(45deg, #00ff88, #00cc6a);
+    color: #1a1a2e;
+    margin-top: 20px;
+}
+
+.link-submit-btn:hover {
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+}
+
+.submission-results {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(0, 255, 136, 0.1);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 15px;
+    text-align: center;
+}
+
+.submission-results.success {
+    background: rgba(0, 255, 136, 0.1);
+    border-color: rgba(0, 255, 136, 0.5);
+}
+
+.submission-results.error {
+    background: rgba(255, 71, 87, 0.1);
+    border-color: rgba(255, 71, 87, 0.5);
+}
+
+.submission-results h3 {
+    color: #00ff88;
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+}
+
+.submission-results.error h3 {
+    color: #ff4757;
+}
+
+.submission-results p {
+    color: #ccc;
+    line-height: 1.6;
+}
+
+.submission-results .submitted-link {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    word-break: break-all;
+}
+
+.submission-results .submitted-link a {
+    color: #00ff88;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.submission-results .submitted-link a:hover {
+    text-decoration: underline;
+}
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+} 
