@@ -5,8 +5,6 @@ let currentUser = null;
 const userEntryForm = document.getElementById('userEntryForm');
 const forumSection = document.getElementById('forumSection');
 const currentUserSpan = document.getElementById('currentUser');
-const linkSubmissionForm = document.getElementById('linkSubmissionForm');
-const submissionResults = document.getElementById('submissionResults');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -17,13 +15,8 @@ function initializeApp() {
     // Add form submission handler
     userEntryForm.addEventListener('submit', handleUserEntry);
     
-    // Add link submission form handler
-    linkSubmissionForm.addEventListener('submit', handleLinkSubmission);
-    
     // Add input focus effects
     addInputEffects();
-    
-
 }
 
 async function handleUserEntry(e) {
@@ -125,98 +118,9 @@ async function handleUserEntry(e) {
     }
 }
 
-async function handleLinkSubmission(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(linkSubmissionForm);
-    const link = formData.get('submissionLink').trim();
-    
-    // Validate required fields
-    if (!link) {
-        showLinkSubmissionResult('Please fill in the link field', 'error');
-        return;
-    }
-    
-    // Validate URL format
-    try {
-        new URL(link);
-    } catch {
-        showLinkSubmissionResult('Please enter a valid URL', 'error');
-        return;
-    }
-    
-    try {
-        // Show loading state
-        const submitBtn = linkSubmissionForm.querySelector('.link-submit-btn');
-        const btnText = submitBtn.querySelector('.btn-text');
-        btnText.textContent = 'Submitting...';
-        submitBtn.disabled = true;
-        
-        // Send data to backend
-        const response = await fetch('/api/submissions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                link: link,
-                submittedAt: new Date().toISOString()
-            })
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.message || 'Submission failed');
-        }
-        
-        // Show success result
-        showLinkSubmissionResult('Link submitted successfully!', 'success', link);
-        
-        // Reset form
-        linkSubmissionForm.reset();
-        
-    } catch (error) {
-        console.error('Link submission error:', error);
-        let errorMessage = 'Submission failed. Please try again.';
-        
-        if (error.message) {
-            errorMessage = error.message;
-        }
-        
-        showLinkSubmissionResult(errorMessage, 'error');
-    } finally {
-        // Reset button
-        const submitBtn = linkSubmissionForm.querySelector('.link-submit-btn');
-        const btnText = submitBtn.querySelector('.btn-text');
-        btnText.textContent = 'Submit Link';
-        submitBtn.disabled = false;
-    }
-}
 
-function showLinkSubmissionResult(message, type, link = null) {
-    submissionResults.className = `submission-results ${type}`;
-    
-    let html = `<h3>${type === 'success' ? '✅ Success!' : '❌ Error'}</h3>`;
-    html += `<p>${message}</p>`;
-    
-    if (type === 'success' && link) {
-        html += `
-            <div class="submitted-link">
-                <strong>Submitted Link:</strong><br>
-                <a href="${link}" target="_blank" rel="noopener noreferrer">${link}</a>
-            </div>
-        `;
-    }
-    
-    submissionResults.innerHTML = html;
-    submissionResults.classList.remove('hidden');
-    
-    // Auto-hide after 8 seconds
-    setTimeout(() => {
-        submissionResults.classList.add('hidden');
-    }, 8000);
-}
+
+
 
 function showEntryAnimation() {
     const submitBtn = userEntryForm.querySelector('.submit-btn');
