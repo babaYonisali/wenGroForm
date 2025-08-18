@@ -680,4 +680,94 @@ body {
     background: linear-gradient(45deg, #ffed4e, #fff200);
 } 
 
+/* X Login Styles */
+.x-login-container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.x-login-content h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #ffd700;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.x-login-content p {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    color: #ffffff;
+    margin-bottom: 40px;
+    opacity: 0.9;
+}
+
+.x-login-btn {
+    position: relative;
+    background: linear-gradient(45deg, #1da1f2, #0d8bd9);
+    border: none;
+    border-radius: 50px;
+    padding: 20px 40px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(29, 161, 242, 0.3);
+    margin-bottom: 30px;
+}
+
+.x-login-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(29, 161, 242, 0.4);
+}
+
+.x-login-btn:active {
+    transform: translateY(-1px);
+}
+
+.x-icon {
+    font-size: 1.5rem;
+    margin-right: 15px;
+    vertical-align: middle;
+}
+
+.x-login-btn .btn-glow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.x-login-btn:hover .btn-glow {
+    left: 100%;
+}
+
+.login-info {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.login-info p {
+    font-size: 1rem;
+    color: #ffffff;
+    opacity: 0.8;
+    margin: 0;
+}
+
+/* Hide/Show utilities */
+.hidden {
+    display: none !important;
+} 
+
  

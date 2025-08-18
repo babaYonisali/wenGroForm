@@ -27,24 +27,43 @@
                 <h2 class="welcome-title">Creator Sign Up</h2>
             </div>
 
-            <div class="entry-form-container">
+            <!-- X Login Section (shown initially) -->
+            <div id="xLoginSection" class="x-login-container">
+                <div class="x-login-content">
+                    <h3>Join the Greenhouse</h3>
+                    <p>Connect with your X account to get started</p>
+                    
+                    <button id="xLoginBtn" class="x-login-btn">
+                        <span class="x-icon">𝕏</span>
+                        <span class="btn-text">Login with X</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                    
+                    <div class="login-info">
+                        <p>We'll verify your X identity and let you complete your profile</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Data Form (hidden initially, shown after X login) -->
+            <div id="userDataForm" class="entry-form-container hidden">
                 <form id="userEntryForm" class="entry-form">
                     <div class="form-header">
-                        <h3>Join, Create, Grow</h3>
-                        <p>Connect with fellow crypto creators</p>
+                        <h3>Complete Your Profile</h3>
+                        <p>Welcome! Please provide your additional details</p>
                     </div>
 
                     <div class="form-group">
                         <label for="xHandle" class="form-label">
                             <span class="label-icon">𝕏</span>
-                        Handle
+                            X Handle
                         </label>
                         <input 
                             type="text" 
                             id="xHandle" 
                             name="xHandle" 
                             class="form-input"
-                            placeholder="@yourhandle"
+                            readonly
                             required
                         >
                         <div class="input-glow"></div>
@@ -107,11 +126,7 @@
                     </button>
                 </form>
             </div>
-
-
         </main>
-
-
 
         <div id="forumSection" class="forum-section hidden">
             <div class="forum-header">
