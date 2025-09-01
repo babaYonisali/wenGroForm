@@ -14,7 +14,7 @@ const {
   X_CLIENT_SECRET,
   X_CALLBACK_URL,
   SESSION_SECRET,
-  FRONTEND_URL = 'http://localhost:3001',
+  FRONTEND_URL = 'https://community.wengro.com/',
   NODE_ENV
 } = process.env;
 
