@@ -28,6 +28,10 @@
       "dest": "/app.js"
     },
     {
+      "src": "/auth/(.*)",
+      "dest": "/app.js"
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
