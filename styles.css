@@ -772,7 +772,7 @@ body {
 
 /* Home Page Styles */
 .home-section {
-    padding: 40px 20px;
+    padding: 20px 20px 40px 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -796,9 +796,8 @@ body {
 }
 
 .home-content {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 30px;
+    display: flex;
+    justify-content: center;
     margin-bottom: 30px;
 }
 
@@ -809,6 +808,8 @@ body {
     border: 1px solid rgba(255, 215, 0, 0.2);
     backdrop-filter: blur(10px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
+    width: 100%;
 }
 
 .campaign-header {
@@ -914,11 +915,6 @@ body {
 
 /* Responsive design for home page */
 @media (max-width: 768px) {
-    .home-content {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
     .home-header {
         flex-direction: column;
         gap: 20px;
@@ -929,8 +925,15 @@ body {
         font-size: 2rem;
     }
     
+    .user-info {
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+    }
+    
     .campaign-card {
         padding: 20px;
+        margin: 0 10px;
     }
     
     .action-btn {
