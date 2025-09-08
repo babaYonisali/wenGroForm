@@ -565,7 +565,7 @@ const additionalStyles = `
         font-size: 14px;
     }
     
-    .signout-btn.community-btn {
+    #communityBtn {
         background: linear-gradient(45deg, #00b894, #00a085) !important;
         box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3) !important;
         margin-right: 15px;
@@ -575,12 +575,14 @@ const additionalStyles = `
         align-items: center !important;
         justify-content: center !important;
         text-align: center !important;
+        color: white !important;
     }
     
-    .signout-btn.community-btn:hover {
-        transform: translateY(-2px);
+    #communityBtn:hover {
+        transform: translateY(-2px) !important;
         box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4) !important;
         background: linear-gradient(45deg, #00b894, #00a085) !important;
+        color: white !important;
     }
 `;
 

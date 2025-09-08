@@ -794,6 +794,13 @@ body {
     gap: 15px;
 }
 
+.user-info span {
+    color: #ffd700;
+    font-family: 'Orbitron', monospace;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
 .home-header h2 {
     font-family: 'Orbitron', monospace;
     font-size: 2.5rem;
@@ -886,15 +893,7 @@ body {
     transform: translateY(-1px);
 }
 
-.community-btn {
-    background: linear-gradient(45deg, #4ecdc4, #44a08d);
-    color: white;
-    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
-}
-
-.community-btn:hover {
-    box-shadow: 0 12px 35px rgba(78, 205, 196, 0.4);
-}
+/* Community button styles moved to JavaScript for better control */
 
 .btn-icon {
     font-size: 1.5rem;
