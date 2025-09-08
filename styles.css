@@ -772,10 +772,10 @@ body {
 
 /* Home Page Styles */
 .home-section {
-    padding: 15px 20px 20px 20px;
+    padding: 10px 20px 15px 20px;
     max-width: 1200px;
     margin: 0 auto;
-    min-height: calc(100vh - 40px);
+    min-height: calc(100vh - 30px);
     display: flex;
     flex-direction: column;
 }
@@ -784,8 +784,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    padding: 15px;
+    margin-bottom: 15px;
+    padding: 12px;
     background: rgba(255, 215, 0, 0.1);
     border-radius: 15px;
     border: 1px solid rgba(255, 215, 0, 0.3);
@@ -833,7 +833,7 @@ body {
 .campaign-logo {
     display: flex;
     justify-content: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .logo-placeholder {
@@ -845,7 +845,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .logo-text {
@@ -861,8 +861,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
     border-bottom: 1px solid rgba(255, 215, 0, 0.3);
 }
 
@@ -892,12 +892,12 @@ body {
     font-size: 1rem;
     line-height: 1.4;
     opacity: 0.9;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     text-align: center;
 }
 
 .submission-form {
-    margin-top: 10px;
+    margin-top: 5px;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -921,7 +921,7 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 .submit-thread-btn:hover {
