@@ -323,7 +323,7 @@ async function showForum() {
                     <span class="message-author system-author">System</span>
                     <span class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
-                <div class="message-content">Congratulations! You are now part of the WenGro Greenhouse! 🌱</div>
+                <div class="message-content">Congratulations! You are now part of the WenGro Greenhouse!</div>
             </div>
         `;
     }
@@ -371,7 +371,7 @@ function displayAllUsers(users) {
                 <span class="message-author system-author">System</span>
                 <span class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
-            <div class="message-content">Congratulations! You are now part of the WenGro Greenhouse! 🌱</div>
+            <div class="message-content">Congratulations! You are now part of the WenGro Greenhouse!</div>
         </div>
     `;
     
@@ -382,7 +382,7 @@ function displayAllUsers(users) {
                 <span class="message-author system-author">Community</span>
                 <span class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
-            <div class="message-content">🌱 <strong>WenGro Greenhouse Members (${users.length})</strong></div>
+            <div class="message-content"><strong>WenGro Greenhouse Members (${users.length})</strong></div>
         </div>
     `;
     
@@ -400,9 +400,9 @@ function displayAllUsers(users) {
                     <span class="message-time">${joinDate}</span>
                 </div>
                 <div class="message-content">
-                    📱 ${user.telegramHandle}
-                    ${user.xHandleReferral ? `<br>👥 Referred by: ${user.xHandleReferral.startsWith('@') ? user.xHandleReferral : '@' + user.xHandleReferral}` : ''}
-                    ${user.hasKaitoYaps ? `<br>🎵 Has Kaito Yaps` : ''}
+                    TG: ${user.telegramHandle}
+                    ${user.xHandleReferral ? `<br>REF: ${user.xHandleReferral.startsWith('@') ? user.xHandleReferral : '@' + user.xHandleReferral}` : ''}
+                    ${user.hasKaitoYaps ? `<br>KY: Yes` : ''}
                 </div>
             </div>
         `;
@@ -574,7 +574,7 @@ const additionalStyles = `
     
     #communityBtn {
         background: linear-gradient(45deg, #00b894, #00a085) !important;
-        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3) !important;
+he        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3) !important;
         margin-right: 15px;
         width: auto;
         min-width: 100px;
@@ -711,7 +711,7 @@ async function handleThreadSubmission() {
         if (response.ok) {
             // Success animation
             showSubmissionSuccess();
-            showSubmissionStatus('Thread submitted successfully! 🎉', 'success');
+            showSubmissionStatus('Thread submitted successfully!', 'success');
             tweetUrlInput.value = '';
             submitThreadBtn.disabled = true;
             btnText.textContent = 'Already Submitted Today';
