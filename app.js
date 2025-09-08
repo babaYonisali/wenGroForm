@@ -27,7 +27,8 @@ if (!MONGODB_URI) {
 app.use(cors({
   origin: [
     FRONTEND_URL,
-    'https://wen-gro-form-git-dev-yonis-projects-dee17595.vercel.app'
+    'https://wen-gro-form-git-dev-yonis-projects-dee17595.vercel.app',
+    'https://community.wengro.com'
   ],
   credentials: true
 }));
@@ -88,13 +89,20 @@ app.get('/auth/x/start', async (req, res) => {
     // Ask for username and read scopes
     const scopes = ['users.read', 'tweet.read', 'offline.access'];
 
+    // Determine callback URL based on the request origin
+    const origin = req.get('origin') || req.get('referer') || FRONTEND_URL;
+    const isProduction = origin.includes('community.wengro.com');
+    const callbackUrl = isProduction 
+      ? 'https://community.wengro.com/auth/x/callback'
+      : 'https://wen-gro-form-git-dev-yonis-projects-dee17595.vercel.app/auth/x/callback';
+
     const { url, codeVerifier, state } = client.generateOAuth2AuthLink(
-      X_CALLBACK_URL,
+      callbackUrl,
       { scope: scopes }
     );
 
-    // Save both in session to validate later
-    req.session.oauth = { codeVerifier, state };
+    // Save both in session to validate later, including the callback URL used
+    req.session.oauth = { codeVerifier, state, callbackUrl };
     res.redirect(url);
   } catch (err) {
     console.error('Error starting X auth:', err);
@@ -102,7 +110,7 @@ app.get('/auth/x/start', async (req, res) => {
   }
 });
 
-// 2) Handle the callback from X
+// 2) Handle the callback from X (both domains)
 app.get('/auth/x/callback', async (req, res) => {
   try {
     const { state, code } = req.query;
@@ -115,6 +123,9 @@ app.get('/auth/x/callback', async (req, res) => {
 
     const client = getTwitterClient();
 
+    // Use the callback URL that was stored in the session
+    const redirectUri = req.session.oauth.callbackUrl || X_CALLBACK_URL;
+
     const {
       client: loggedClient,
       accessToken,
@@ -123,7 +134,7 @@ app.get('/auth/x/callback', async (req, res) => {
     } = await client.loginWithOAuth2({
       code: code.toString(),
       codeVerifier: req.session.oauth.codeVerifier,
-      redirectUri: X_CALLBACK_URL,
+      redirectUri: redirectUri,
     });
 
     // Fetch the user so we can get their handle
@@ -144,10 +155,14 @@ app.get('/auth/x/callback', async (req, res) => {
       expiresAt: Date.now() + (expiresIn * 1000),
     };
 
-    // Option A: create user now if not exists
-    // Option B: let frontend show a form and POST Telegram handle later
-    // We’ll do Option B. Redirect back to your frontend.
-    const redirectUrl = new URL(FRONTEND_URL);
+    // Determine the frontend URL based on the callback URL used
+    const isProduction = redirectUri.includes('community.wengro.com');
+    const frontendUrl = isProduction 
+      ? 'https://community.wengro.com'
+      : 'https://wen-gro-form-git-dev-yonis-projects-dee17595.vercel.app';
+
+    // Redirect back to the appropriate frontend
+    const redirectUrl = new URL(frontendUrl);
     redirectUrl.searchParams.set('login', 'success');
     redirectUrl.searchParams.set('xHandle', xHandle);
     return res.redirect(redirectUrl.toString());
