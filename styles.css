@@ -902,6 +902,10 @@ body {
     background: linear-gradient(45deg, #00b894, #00a085);
 }
 
+.campaign-status.complete {
+    background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+}
+
 .campaign-description {
     color: #ffffff;
     font-size: 0.9rem;
@@ -910,6 +914,32 @@ body {
     margin-bottom: 8px;
     text-align: center;
     flex-shrink: 0;
+}
+
+.winner-info {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    text-align: center;
+}
+
+.winner-label {
+    color: #ffd700;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.winner-name {
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Orbitron', monospace;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .submission-form {
