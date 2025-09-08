@@ -144,42 +144,59 @@
             </div>
             
             <div class="home-content">
-                <div class="campaign-card">
-                    <div class="campaign-logo">
-                        <div class="logo-placeholder">
-                            <span class="logo-text">Mavryk Logo</span>
+                <div class="campaigns-grid">
+                    <div class="campaign-card">
+                        <div class="campaign-logo">
+                            <div class="logo-placeholder">
+                                <span class="logo-text">Mavryk Logo</span>
+                            </div>
+                        </div>
+                        <div class="campaign-header">
+                            <h3>Mavryk Thread Campaign</h3>
+                            <div class="campaign-status active">Active</div>
+                        </div>
+                        <div class="campaign-content">
+                            <p class="campaign-description">Submit your best Mavryk-related thread and showcase your insights to the community!</p>
+                            
+                            <div class="submission-form">
+                                <div class="form-group">
+                                <label for="tweetUrl" class="form-label">
+                                    <span class="label-icon">X</span>
+                                    Thread URL
+                                </label>
+                                    <input 
+                                        type="url" 
+                                        id="tweetUrl" 
+                                        name="tweetUrl" 
+                                        class="form-input"
+                                        placeholder="https://x.com/username/status/..."
+                                        required
+                                    >
+                                    <div class="input-glow"></div>
+                                </div>
+                                
+                                <button type="button" id="submitThreadBtn" class="submit-thread-btn">
+                                    <span class="btn-text">Submit Thread</span>
+                                    <span class="btn-glow"></span>
+                                </button>
+                                
+                                <div id="submissionStatus" class="submission-status hidden"></div>
+                            </div>
                         </div>
                     </div>
-                    <div class="campaign-header">
-                        <h3>Mavryk Thread Campaign</h3>
-                        <div class="campaign-status active">Active</div>
-                    </div>
-                    <div class="campaign-content">
-                        <p class="campaign-description">Submit your best Mavryk-related thread and showcase your insights to the community!</p>
-                        
-                        <div class="submission-form">
-                            <div class="form-group">
-                            <label for="tweetUrl" class="form-label">
-                                <span class="label-icon">X</span>
-                                Thread URL
-                            </label>
-                                <input 
-                                    type="url" 
-                                    id="tweetUrl" 
-                                    name="tweetUrl" 
-                                    class="form-input"
-                                    placeholder="https://x.com/username/status/..."
-                                    required
-                                >
-                                <div class="input-glow"></div>
+                    
+                    <div class="campaign-card">
+                        <div class="campaign-logo">
+                            <div class="logo-placeholder">
+                                <span class="logo-text">Lombard Logo</span>
                             </div>
-                            
-                            <button type="button" id="submitThreadBtn" class="submit-thread-btn">
-                                <span class="btn-text">Submit Thread</span>
-                                <span class="btn-glow"></span>
-                            </button>
-                            
-                            <div id="submissionStatus" class="submission-status hidden"></div>
+                        </div>
+                        <div class="campaign-header">
+                            <h3>Lombard Campaign</h3>
+                            <div class="campaign-status">Coming Soon</div>
+                        </div>
+                        <div class="campaign-content">
+                            <p class="campaign-description">Lombard campaign details will be announced soon!</p>
                         </div>
                     </div>
                 </div>

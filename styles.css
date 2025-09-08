@@ -820,18 +820,26 @@ body {
     min-height: 0;
 }
 
+.campaigns-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+}
+
 .campaign-card {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 20px;
-    padding: 15px;
+    padding: 12px;
     border: 1px solid rgba(255, 215, 0, 0.2);
     backdrop-filter: blur(10px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    max-width: 800px;
     width: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: fit-content;
+    max-height: 100%;
     overflow-y: auto;
 }
 
@@ -843,21 +851,21 @@ body {
 }
 
 .logo-placeholder {
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     background: rgba(255, 215, 0, 0.1);
     border: 2px dashed rgba(255, 215, 0, 0.3);
-    border-radius: 15px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .logo-text {
     color: #ffd700;
     font-family: 'Orbitron', monospace;
-    font-size: 0.9rem;
+    font-size: 0.7rem;
     font-weight: 600;
     text-align: center;
     opacity: 0.7;
@@ -875,16 +883,16 @@ body {
 
 .campaign-header h3 {
     font-family: 'Orbitron', monospace;
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     color: #ffd700;
 }
 
 .campaign-status {
     background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
     color: white;
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 0.7rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -1078,18 +1086,22 @@ body {
         align-items: center;
     }
     
+    .campaigns-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
     .campaign-card {
-        padding: 12px;
-        margin: 0 2px;
+        padding: 10px;
     }
     
     .logo-placeholder {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
     }
     
     .campaign-header h3 {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     
     .campaign-description {
