@@ -543,6 +543,9 @@ const additionalStyles = `
         transition: all 0.3s ease;
         margin-left: 15px;
         box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+        width: auto;
+        min-width: 100px;
+        white-space: nowrap;
     }
     
     .signout-btn:hover {
@@ -559,14 +562,16 @@ const additionalStyles = `
     }
     
     .signout-btn.community-btn {
-        background: linear-gradient(45deg, #00b894, #00a085);
-        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+        background: linear-gradient(45deg, #00b894, #00a085) !important;
+        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3) !important;
         margin-right: 15px;
+        width: auto;
+        min-width: 100px;
     }
     
     .signout-btn.community-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+        box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4) !important;
     }
 `;
 
