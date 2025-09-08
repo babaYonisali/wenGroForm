@@ -72,15 +72,15 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-// Thread submission schema
-const threadSubmissionSchema = new mongoose.Schema({
+// Thread submission schema (using existing submissions collection)
+const submissionSchema = new mongoose.Schema({
   xHandle: { type: String, required: true },
   tweetId: { type: String, required: true },
   tweetUrl: { type: String, required: true },
   submittedAt: { type: Date, default: Date.now }
 });
 
-const ThreadSubmission = mongoose.model('ThreadSubmission', threadSubmissionSchema);
+const Submission = mongoose.model('Submission', submissionSchema);
 
 // ---------- Helpers ----------
 function getTwitterClient() {
@@ -299,7 +299,7 @@ app.get('/api/thread-submissions/status', async (req, res) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const submission = await ThreadSubmission.findOne({
+    const submission = await Submission.findOne({
       xHandle: xHandle,
       submittedAt: {
         $gte: today,
@@ -337,7 +337,7 @@ app.post('/api/thread-submissions', async (req, res) => {
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const existingSubmission = await ThreadSubmission.findOne({
+    const existingSubmission = await Submission.findOne({
       xHandle: xHandle,
       submittedAt: {
         $gte: today,
@@ -353,7 +353,7 @@ app.post('/api/thread-submissions', async (req, res) => {
     }
 
     // Create new submission
-    const submission = new ThreadSubmission({
+    const submission = new Submission({
       xHandle: xHandle,
       tweetId: tweetId,
       tweetUrl: tweetUrl
