@@ -72,6 +72,16 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// Thread submission schema
+const threadSubmissionSchema = new mongoose.Schema({
+  xHandle: { type: String, required: true },
+  tweetId: { type: String, required: true },
+  tweetUrl: { type: String, required: true },
+  submittedAt: { type: Date, default: Date.now }
+});
+
+const ThreadSubmission = mongoose.model('ThreadSubmission', threadSubmissionSchema);
+
 // ---------- Helpers ----------
 function getTwitterClient() {
   return new TwitterApi({
@@ -273,6 +283,93 @@ app.get('/api/users/:xHandle', async (req, res) => {
 app.post('/auth/logout', (req, res) => {
     req.session = null;
     res.json({ success: true, message: 'Logged out successfully' });
+});
+
+// Thread submission endpoints
+app.get('/api/thread-submissions/status', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({ success: false, message: 'Not authenticated' });
+    }
+
+    const xHandle = req.session.user.xHandle;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const submission = await ThreadSubmission.findOne({
+      xHandle: xHandle,
+      submittedAt: {
+        $gte: today,
+        $lt: tomorrow
+      }
+    });
+
+    res.json({
+      success: true,
+      hasSubmittedToday: !!submission
+    });
+  } catch (error) {
+    console.error('Error checking submission status:', error);
+    res.status(500).json({ success: false, message: 'Error checking submission status' });
+  }
+});
+
+app.post('/api/thread-submissions', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({ success: false, message: 'Not authenticated' });
+    }
+
+    const { tweetUrl, tweetId } = req.body;
+    const xHandle = req.session.user.xHandle;
+
+    if (!tweetUrl || !tweetId) {
+      return res.status(400).json({ success: false, message: 'Tweet URL and ID are required' });
+    }
+
+    // Check if user has already submitted today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const existingSubmission = await ThreadSubmission.findOne({
+      xHandle: xHandle,
+      submittedAt: {
+        $gte: today,
+        $lt: tomorrow
+      }
+    });
+
+    if (existingSubmission) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'You have already submitted a thread today. Come back tomorrow!' 
+      });
+    }
+
+    // Create new submission
+    const submission = new ThreadSubmission({
+      xHandle: xHandle,
+      tweetId: tweetId,
+      tweetUrl: tweetUrl
+    });
+
+    await submission.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Thread submitted successfully',
+      data: submission
+    });
+  } catch (error) {
+    console.error('Error submitting thread:', error);
+    res.status(500).json({ success: false, message: 'Error submitting thread' });
+  }
 });
 const PORT = process.env.PORT || 3001;
 

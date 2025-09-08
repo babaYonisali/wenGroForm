@@ -15,6 +15,9 @@ const xHandleInput = document.getElementById('xHandle');
 const communityBtn = document.getElementById('communityBtn');
 const backToHomeBtn = document.getElementById('backToHomeBtn');
 const homeSignoutBtn = document.getElementById('homeSignoutBtn');
+const submitThreadBtn = document.getElementById('submitThreadBtn');
+const tweetUrlInput = document.getElementById('tweetUrl');
+const submissionStatus = document.getElementById('submissionStatus');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -34,6 +37,7 @@ function initializeApp() {
     communityBtn.addEventListener('click', showForum);
     backToHomeBtn.addEventListener('click', showHome);
     homeSignoutBtn.addEventListener('click', handleSignout);
+    submitThreadBtn.addEventListener('click', handleThreadSubmission);
     
     // Add input focus effects
     addInputEffects();
@@ -284,6 +288,9 @@ function showHome() {
     
     // Update user info
     homeCurrentUserSpan.textContent = `Welcome, @${xUserData.username}!`;
+    
+    // Check if user has already submitted today
+    checkDailySubmissionStatus();
 }
 
 async function showForum() {
@@ -636,5 +643,165 @@ function createCryptoRain() {
                 document.body.removeChild(element);
             }, 3100);
         }, i * 100);
+    }
+}
+
+// Thread submission functionality
+async function checkDailySubmissionStatus() {
+    try {
+        const response = await fetch('/api/thread-submissions/status', {
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.hasSubmittedToday) {
+                showSubmissionStatus('You have already submitted a thread today. Come back tomorrow!', 'info');
+                submitThreadBtn.disabled = true;
+                submitThreadBtn.querySelector('.btn-text').textContent = 'Already Submitted Today';
+            } else {
+                submitThreadBtn.disabled = false;
+                submitThreadBtn.querySelector('.btn-text').textContent = 'Submit Thread';
+            }
+        }
+    } catch (error) {
+        console.error('Error checking submission status:', error);
+    }
+}
+
+async function handleThreadSubmission() {
+    const tweetUrl = tweetUrlInput.value.trim();
+    
+    if (!tweetUrl) {
+        showSubmissionStatus('Please enter a valid thread URL', 'error');
+        return;
+    }
+    
+    // Validate Twitter URL format
+    const twitterRegex = /^https:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+$/;
+    if (!twitterRegex.test(tweetUrl)) {
+        showSubmissionStatus('Please enter a valid Twitter/X thread URL', 'error');
+        return;
+    }
+    
+    try {
+        // Show loading state
+        submitThreadBtn.disabled = true;
+        const btnText = submitThreadBtn.querySelector('.btn-text');
+        btnText.textContent = 'Submitting...';
+        
+        // Extract tweet ID from URL
+        const tweetId = extractTweetId(tweetUrl);
+        
+        // Submit thread
+        const response = await fetch('/api/thread-submissions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tweetUrl: tweetUrl,
+                tweetId: tweetId
+            }),
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Success animation
+            showSubmissionSuccess();
+            showSubmissionStatus('Thread submitted successfully! 🎉', 'success');
+            tweetUrlInput.value = '';
+            submitThreadBtn.disabled = true;
+            btnText.textContent = 'Already Submitted Today';
+        } else {
+            throw new Error(data.message || 'Failed to submit thread');
+        }
+        
+    } catch (error) {
+        console.error('Error submitting thread:', error);
+        showSubmissionStatus(error.message || 'Failed to submit thread. Please try again.', 'error');
+        
+        // Reset button
+        submitThreadBtn.disabled = false;
+        submitThreadBtn.querySelector('.btn-text').textContent = 'Submit Thread';
+    }
+}
+
+function extractTweetId(url) {
+    const match = url.match(/\/status\/(\d+)/);
+    return match ? match[1] : null;
+}
+
+function showSubmissionStatus(message, type) {
+    submissionStatus.textContent = message;
+    submissionStatus.className = `submission-status ${type}`;
+    submissionStatus.classList.remove('hidden');
+    
+    // Auto-hide after 5 seconds for success/info messages
+    if (type === 'success' || type === 'info') {
+        setTimeout(() => {
+            submissionStatus.classList.add('hidden');
+        }, 5000);
+    }
+}
+
+function showSubmissionSuccess() {
+    // Create particle effect
+    createSubmissionParticles();
+    
+    // Add success glow to button
+    submitThreadBtn.style.background = 'linear-gradient(45deg, #00b894, #00a085)';
+    submitThreadBtn.style.boxShadow = '0 0 30px rgba(0, 184, 148, 0.6)';
+    
+    // Reset after animation
+    setTimeout(() => {
+        submitThreadBtn.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
+        submitThreadBtn.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+    }, 2000);
+}
+
+function createSubmissionParticles() {
+    const rect = submitThreadBtn.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.left = centerX + 'px';
+            particle.style.top = centerY + 'px';
+            particle.style.width = '6px';
+            particle.style.height = '6px';
+            particle.style.background = '#00b894';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '1000';
+            particle.style.transition = 'all 1s ease-out';
+            
+            document.body.appendChild(particle);
+            
+            // Animate particle
+            setTimeout(() => {
+                const angle = (Math.PI * 2 * i) / 15;
+                const distance = 80 + Math.random() * 40;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.opacity = '0';
+                particle.style.transform = 'scale(0)';
+            }, 10);
+            
+            // Remove particle
+            setTimeout(() => {
+                if (document.body.contains(particle)) {
+                    document.body.removeChild(particle);
+                }
+            }, 1000);
+        }, i * 50);
     }
 } 
