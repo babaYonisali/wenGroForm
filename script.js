@@ -546,6 +546,10 @@ const additionalStyles = `
         width: auto;
         min-width: 100px;
         white-space: nowrap;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
     }
     
     .signout-btn:hover {
@@ -567,11 +571,16 @@ const additionalStyles = `
         margin-right: 15px;
         width: auto;
         min-width: 100px;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
     }
     
     .signout-btn.community-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4) !important;
+        background: linear-gradient(45deg, #00b894, #00a085) !important;
     }
 `;
 
