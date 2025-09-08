@@ -33,16 +33,27 @@ A crypto-native community platform for capturing user information and building t
 
 3. **Set up environment variables**
    ```bash
+   # Option 1: Use the setup script (recommended)
+   npm run setup:local
+   
+   # Option 2: Manual setup
    cp env.example .env
-   # Edit .env with your MongoDB Atlas connection string
+   # Edit .env with your MongoDB Atlas connection string and Twitter credentials
    ```
 
-4. **Start the development server**
+4. **Configure Twitter App**
+   - Go to [Twitter Developer Portal](https://developer.twitter.com/)
+   - Navigate to your app settings
+   - Add callback URL: `http://localhost:3001/auth/x/callback`
+
+5. **Start the development server**
    ```bash
-   node app.js
+   npm start
+   # or for development with auto-reload
+   npm run dev
    ```
 
-5. **Visit the application**
+6. **Visit the application**
    - Open http://localhost:3001 in your browser
 
 ## 🛠️ Tech Stack
@@ -91,6 +102,26 @@ NODE_ENV=development
 5. Configure IP whitelist to allow connections from anywhere (`0.0.0.0/0`)
 
 ## 🌐 Deployment
+
+### Environment-Specific Authentication
+
+This app now supports authentication across different environments:
+
+- **Local Development**: `http://localhost:3001`
+- **Vercel Preview**: `https://your-preview-url.vercel.app`
+- **Vercel Production**: `https://your-production-domain.vercel.app`
+
+### Quick Setup
+
+1. **For Vercel deployment setup:**
+   ```bash
+   npm run setup:vercel
+   ```
+
+2. **For local development:**
+   ```bash
+   npm run setup:local
+   ```
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions to Vercel.
 
