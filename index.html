@@ -128,11 +128,47 @@
             </div>
         </main>
 
+        <!-- Home Page Section (shown after successful signup) -->
+        <div id="homeSection" class="home-section hidden">
+            <div class="home-header">
+                <h2>Welcome to WenGro Greenhouse</h2>
+                <div class="user-info">
+                    <span id="homeCurrentUser"></span>
+                    <button id="homeSignoutBtn" class="signout-btn">
+                        <span class="btn-text">Sign Out</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="home-content">
+                <div class="campaign-card">
+                    <div class="campaign-header">
+                        <h3>Campaign</h3>
+                        <div class="campaign-status">Coming Soon</div>
+                    </div>
+                    <div class="campaign-content">
+                        <p>Campaign details will be displayed here</p>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button id="communityBtn" class="action-btn community-btn">
+                        <span class="btn-icon">🌱</span>
+                        <span class="btn-text">Community</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forum Section (shown when user clicks Community) -->
         <div id="forumSection" class="forum-section hidden">
             <div class="forum-header">
-                <h2>WenGro Greenhouse</h2>
+                <h2>WenGro Greenhouse Community</h2>
                 <div class="user-info">
                     <span id="currentUser"></span>
+                    <button id="backToHomeBtn" class="back-btn">
+                        <span class="btn-text">← Back to Home</span>
+                    </button>
                 </div>
             </div>
             

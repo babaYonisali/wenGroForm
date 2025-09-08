@@ -768,6 +768,175 @@ body {
 /* Hide/Show utilities */
 .hidden {
     display: none !important;
-} 
+}
+
+/* Home Page Styles */
+.home-section {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding: 20px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.home-header h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 2.5rem;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.home-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.campaign-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.campaign-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.campaign-header h3 {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    color: #ffd700;
+}
+
+.campaign-status {
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.campaign-content {
+    color: #ffffff;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.action-btn {
+    position: relative;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    border: none;
+    border-radius: 15px;
+    padding: 20px 30px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.action-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(255, 215, 0, 0.4);
+}
+
+.action-btn:active {
+    transform: translateY(-1px);
+}
+
+.community-btn {
+    background: linear-gradient(45deg, #4ecdc4, #44a08d);
+    color: white;
+    box-shadow: 0 8px 25px rgba(78, 205, 196, 0.3);
+}
+
+.community-btn:hover {
+    box-shadow: 0 12px 35px rgba(78, 205, 196, 0.4);
+}
+
+.btn-icon {
+    font-size: 1.5rem;
+}
+
+.back-btn {
+    background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+}
+
+/* Responsive design for home page */
+@media (max-width: 768px) {
+    .home-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .home-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+    
+    .home-header h2 {
+        font-size: 2rem;
+    }
+    
+    .campaign-card {
+        padding: 20px;
+    }
+    
+    .action-btn {
+        padding: 15px 25px;
+        font-size: 1.1rem;
+    }
+}
 
  

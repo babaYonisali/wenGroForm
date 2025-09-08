@@ -7,9 +7,14 @@ const xLoginSection = document.getElementById('xLoginSection');
 const userDataForm = document.getElementById('userDataForm');
 const xLoginBtn = document.getElementById('xLoginBtn');
 const userEntryForm = document.getElementById('userEntryForm');
+const homeSection = document.getElementById('homeSection');
 const forumSection = document.getElementById('forumSection');
 const currentUserSpan = document.getElementById('currentUser');
+const homeCurrentUserSpan = document.getElementById('homeCurrentUser');
 const xHandleInput = document.getElementById('xHandle');
+const communityBtn = document.getElementById('communityBtn');
+const backToHomeBtn = document.getElementById('backToHomeBtn');
+const homeSignoutBtn = document.getElementById('homeSignoutBtn');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -26,6 +31,9 @@ function initializeApp() {
     // Add event listeners
     xLoginBtn.addEventListener('click', handleXLogin);
     userEntryForm.addEventListener('submit', handleUserEntry);
+    communityBtn.addEventListener('click', showForum);
+    backToHomeBtn.addEventListener('click', showHome);
+    homeSignoutBtn.addEventListener('click', handleSignout);
     
     // Add input focus effects
     addInputEffects();
@@ -65,9 +73,9 @@ async function checkUserRegistrationStatus(xHandle) {
         if (response.ok) {
             const userData = await response.json();
             if (userData.data) {
-                // User has already submitted their data, show the forum
+                // User has already submitted their data, show the home page
                 xUserData = { username: xHandle };
-                showForum();
+                showHome();
             } else {
                 // User is logged in but hasn't submitted form data yet
                 xUserData = { username: xHandle };
@@ -113,6 +121,7 @@ function handleXLogin() {
 function showXLoginSection() {
     xLoginSection.classList.remove('hidden');
     userDataForm.classList.add('hidden');
+    homeSection.classList.add('hidden');
     forumSection.classList.add('hidden');
 }
 
@@ -125,6 +134,7 @@ function showUserDataForm() {
         // Show the form
         xLoginSection.classList.add('hidden');
         userDataForm.classList.remove('hidden');
+        homeSection.classList.add('hidden');
         forumSection.classList.add('hidden');
     }
 }
@@ -200,9 +210,9 @@ function showSuccessAndRedirect() {
     // Show success animation
     showEntryAnimation();
     
-    // Switch to forum view
+    // Switch to home view
     setTimeout(() => {
-        showForum();
+        showHome();
     }, 1500);
 }
 
@@ -264,32 +274,28 @@ function createParticleEffect(element) {
     }
 }
 
-async function showForum() {
-    // Hide main content
+function showHome() {
+    // Hide main content and other sections
     document.querySelector('.main-content').style.display = 'none';
+    forumSection.classList.add('hidden');
+    
+    // Show home section
+    homeSection.classList.remove('hidden');
+    
+    // Update user info
+    homeCurrentUserSpan.textContent = `Welcome, @${xUserData.username}!`;
+}
+
+async function showForum() {
+    // Hide main content and home section
+    document.querySelector('.main-content').style.display = 'none';
+    homeSection.classList.add('hidden');
     
     // Show forum section
     forumSection.classList.remove('hidden');
     
-    // Update user info and add signout button
+    // Update user info
     currentUserSpan.textContent = `Welcome, @${xUserData.username}!`;
-    
-    // Add signout button if it doesn't exist
-    if (!document.getElementById('signoutBtn')) {
-        const signoutBtn = document.createElement('button');
-        signoutBtn.id = 'signoutBtn';
-        signoutBtn.className = 'signout-btn';
-        signoutBtn.innerHTML = `
-            <span class="btn-text">Sign Out</span>
-        `;
-        signoutBtn.addEventListener('click', handleSignout);
-        
-        // Insert into the user-info section
-        const userInfoSection = document.querySelector('.user-info');
-        if (userInfoSection) {
-            userInfoSection.appendChild(signoutBtn);
-        }
-    }
     
     // Fetch all users from the database
     try {
@@ -338,12 +344,6 @@ async function handleSignout() {
                 
                 // Show main content again
                 document.querySelector('.main-content').style.display = 'block';
-                
-                // Remove signout button
-                const signoutBtn = document.getElementById('signoutBtn');
-                if (signoutBtn) {
-                    signoutBtn.remove();
-                }
             }, 1000);
         } else {
             throw new Error('Failed to sign out');
