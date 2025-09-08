@@ -557,6 +557,17 @@ const additionalStyles = `
     .signout-btn .btn-text {
         font-size: 14px;
     }
+    
+    .signout-btn.community-btn {
+        background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        box-shadow: 0 4px 15px rgba(78, 205, 196, 0.3);
+        margin-right: 15px;
+    }
+    
+    .signout-btn.community-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(78, 205, 196, 0.4);
+    }
 `;
 
 // Inject additional styles
