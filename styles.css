@@ -772,23 +772,25 @@ body {
 
 /* Home Page Styles */
 .home-section {
-    padding: 10px 20px 15px 20px;
+    padding: 5px 20px 10px 20px;
     max-width: 1200px;
     margin: 0 auto;
-    min-height: calc(100vh - 30px);
+    height: calc(100vh - 20px);
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .home-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
-    padding: 12px;
+    margin-bottom: 10px;
+    padding: 8px;
     background: rgba(255, 215, 0, 0.1);
     border-radius: 15px;
     border: 1px solid rgba(255, 215, 0, 0.3);
+    flex-shrink: 0;
 }
 
 .user-info {
@@ -815,12 +817,13 @@ body {
     display: flex;
     justify-content: center;
     flex: 1;
+    min-height: 0;
 }
 
 .campaign-card {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 20px;
-    padding: 20px;
+    padding: 15px;
     border: 1px solid rgba(255, 215, 0, 0.2);
     backdrop-filter: blur(10px);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -828,24 +831,27 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
 }
 
 .campaign-logo {
     display: flex;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
+    flex-shrink: 0;
 }
 
 .logo-placeholder {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     background: rgba(255, 215, 0, 0.1);
     border: 2px dashed rgba(255, 215, 0, 0.3);
     border-radius: 15px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .logo-text {
@@ -861,9 +867,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
+    margin-bottom: 8px;
+    padding-bottom: 6px;
     border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+    flex-shrink: 0;
 }
 
 .campaign-header h3 {
@@ -889,11 +896,12 @@ body {
 
 .campaign-description {
     color: #ffffff;
-    font-size: 1rem;
-    line-height: 1.4;
+    font-size: 0.9rem;
+    line-height: 1.3;
     opacity: 0.9;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .submission-form {
@@ -908,9 +916,9 @@ body {
     background: linear-gradient(45deg, #ffd700, #ffed4e);
     border: none;
     border-radius: 15px;
-    padding: 12px 25px;
+    padding: 10px 20px;
     font-family: 'Rajdhani', sans-serif;
-    font-size: 1rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #000;
     cursor: pointer;
@@ -921,7 +929,8 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 8px;
+    flex-shrink: 0;
 }
 
 .submit-thread-btn:hover {
@@ -1047,54 +1056,55 @@ body {
 /* Responsive design for home page */
 @media (max-width: 768px) {
     .home-section {
-        padding: 10px 15px 15px 15px;
+        padding: 5px 10px 10px 10px;
+        height: calc(100vh - 15px);
     }
     
     .home-header {
         flex-direction: column;
-        gap: 15px;
+        gap: 8px;
         text-align: center;
-        padding: 12px;
-        margin-bottom: 15px;
+        padding: 6px;
+        margin-bottom: 8px;
     }
     
     .home-header h2 {
-        font-size: 1.6rem;
+        font-size: 1.4rem;
     }
     
     .user-info {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
     }
     
     .campaign-card {
-        padding: 15px;
-        margin: 0 5px;
+        padding: 12px;
+        margin: 0 2px;
     }
     
     .logo-placeholder {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
     }
     
     .campaign-header h3 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
     
     .campaign-description {
-        font-size: 0.9rem;
-        margin-bottom: 12px;
+        font-size: 0.8rem;
+        margin-bottom: 6px;
     }
     
     .action-btn {
-        padding: 12px 20px;
-        font-size: 1rem;
+        padding: 8px 15px;
+        font-size: 0.9rem;
     }
     
     .submit-thread-btn {
-        padding: 10px 20px;
-        font-size: 0.9rem;
+        padding: 8px 15px;
+        font-size: 0.8rem;
     }
 }
 
