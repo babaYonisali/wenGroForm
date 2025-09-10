@@ -630,6 +630,11 @@ body {
         padding: 15px;
     }
     
+    .logo {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
     .logo-text {
         font-size: 2rem;
     }
@@ -658,6 +663,60 @@ body {
     
     .send-btn {
         width: 100%;
+    }
+    
+    .x-login-content h3 {
+        font-size: 2rem;
+    }
+    
+    .x-login-content p {
+        font-size: 1.1rem;
+    }
+    
+    .x-login-btn {
+        padding: 15px 30px;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .logo-text {
+        font-size: 1.5rem;
+    }
+    
+    .welcome-title {
+        font-size: 1.5rem;
+    }
+    
+    .entry-form {
+        padding: 20px 15px;
+    }
+    
+    .x-login-content h3 {
+        font-size: 1.8rem;
+    }
+    
+    .x-login-content p {
+        font-size: 1rem;
+    }
+    
+    .x-login-btn {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+    
+    .form-input {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .submit-btn {
+        padding: 12px;
+        font-size: 1rem;
     }
 }
 
@@ -826,6 +885,7 @@ body {
     gap: 20px;
     width: 100%;
     max-width: 1000px;
+    align-items: stretch;
 }
 
 .campaign-card {
@@ -838,8 +898,8 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    height: fit-content;
-    max-height: 100%;
+    min-height: 400px;
+    height: 100%;
     overflow-y: auto;
 }
 
@@ -1145,10 +1205,12 @@ body {
     .campaigns-grid {
         grid-template-columns: 1fr;
         gap: 15px;
+        max-width: 100%;
     }
     
     .campaign-card {
         padding: 10px;
+        min-height: 350px;
     }
     
     .logo-placeholder {
@@ -1173,6 +1235,76 @@ body {
     .submit-thread-btn {
         padding: 8px 15px;
         font-size: 0.8rem;
+    }
+}
+
+/* Tablet optimizations */
+@media (max-width: 1024px) and (min-width: 769px) {
+    .campaigns-grid {
+        gap: 18px;
+    }
+    
+    .campaign-card {
+        min-height: 380px;
+    }
+    
+    .home-header h2 {
+        font-size: 1.8rem;
+    }
+    
+    .campaign-header h3 {
+        font-size: 1.1rem;
+    }
+}
+
+/* Additional mobile optimizations */
+@media (max-width: 480px) {
+    .home-section {
+        padding: 5px 5px 10px 5px;
+    }
+    
+    .home-header {
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+    
+    .home-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .campaign-card {
+        padding: 8px;
+        min-height: 320px;
+    }
+    
+    .campaign-header h3 {
+        font-size: 0.9rem;
+    }
+    
+    .campaign-description {
+        font-size: 0.75rem;
+        line-height: 1.2;
+    }
+    
+    .submit-thread-btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+    
+    .form-input {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .campaign-logo {
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 6px auto;
+    }
+    
+    .campaign-logo-image {
+        width: 100%;
+        height: 100%;
     }
 }
 
