@@ -558,6 +558,16 @@ const additionalStyles = `
         text-align: center;
     }
     
+    @media (max-width: 768px) {
+        .signout-btn {
+            margin-left: 0;
+        }
+        
+        #communityBtn {
+            margin-right: 0 !important;
+        }
+    }
+    
     .signout-btn:hover {
         transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
