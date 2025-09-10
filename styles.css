@@ -885,7 +885,7 @@ body {
     gap: 20px;
     width: 100%;
     max-width: 1000px;
-    align-items: stretch;
+    align-items: start;
 }
 
 .campaign-card {
@@ -898,7 +898,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: auto;
 }
 
 .campaign-logo {
