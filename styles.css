@@ -898,7 +898,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    height: auto;
+    height: 330px;
 }
 
 .campaign-logo {
@@ -1208,6 +1208,7 @@ body {
     
     .campaign-card {
         padding: 10px;
+        height: 180px;
     }
     
     .logo-placeholder {
@@ -1268,6 +1269,7 @@ body {
     
     .campaign-card {
         padding: 8px;
+        height: 160px;
     }
     
     .campaign-header h3 {
