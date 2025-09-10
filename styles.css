@@ -898,7 +898,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    min-height: 400px;
+    min-height: 220px;
     height: 100%;
     overflow-y: auto;
 }
@@ -1210,7 +1210,7 @@ body {
     
     .campaign-card {
         padding: 10px;
-        min-height: 350px;
+        min-height: 190px;
     }
     
     .logo-placeholder {
@@ -1245,7 +1245,7 @@ body {
     }
     
     .campaign-card {
-        min-height: 380px;
+        min-height: 200px;
     }
     
     .home-header h2 {
@@ -1274,7 +1274,7 @@ body {
     
     .campaign-card {
         padding: 8px;
-        min-height: 320px;
+        min-height: 170px;
     }
     
     .campaign-header h3 {
