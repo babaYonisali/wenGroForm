@@ -550,8 +550,7 @@ const additionalStyles = `
         transition: all 0.3s ease;
         margin-left: 15px;
         box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
-        width: auto;
-        min-width: 100px;
+        width: 120px;
         white-space: nowrap;
         display: flex;
         align-items: center;
@@ -574,10 +573,9 @@ const additionalStyles = `
     
     #communityBtn {
         background: linear-gradient(45deg, #00b894, #00a085) !important;
-he        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3) !important;
+        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3) !important;
         margin-right: 15px;
-        width: auto;
-        min-width: 100px;
+        width: 120px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
