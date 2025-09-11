@@ -834,10 +834,10 @@ body {
     padding: 5px 20px 10px 20px;
     max-width: 1200px;
     margin: 0 auto;
-    height: calc(100vh - 20px);
+    min-height: calc(100vh - 20px);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .home-header {
@@ -1179,7 +1179,7 @@ body {
 @media (max-width: 768px) {
     .home-section {
         padding: 5px 10px 10px 10px;
-        height: calc(100vh - 15px);
+        min-height: calc(100vh - 15px);
     }
     
     .home-header {
@@ -1257,6 +1257,7 @@ body {
 @media (max-width: 480px) {
     .home-section {
         padding: 5px 5px 10px 5px;
+        min-height: calc(100vh - 10px);
     }
     
     .home-header {
