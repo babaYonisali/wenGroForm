@@ -45,42 +45,14 @@ app.use(cookieSession({
   // cookie-session stores data client-side so it is serverless friendly
 }));
 
-// ---------- Mongo ----------
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000,
-  socketTimeoutMS: 45000,
-  connectTimeoutMS: 10000,
-  maxPoolSize: 10
-});
-
-const db = mongoose.connection;
-db.on('error', (error) => console.error('❌ MongoDB connection error:', error));
-db.on('connected', () => console.log('✅ Connected to MongoDB'));
-db.on('disconnected', () => console.log('❌ Disconnected from MongoDB'));
-db.once('open', () => console.log('🚀 MongoDB connection established'));
+// ---------- Database ----------
+const connectDB = require('./config/database');
+connectDB();
 
 // ---------- Models ----------
-const userSchema = new mongoose.Schema({
-  xHandle: { type: String, required: true, unique: true },
-  telegramHandle: { type: String, required: false, unique: false },
-  xHandleReferral: { type: String, required: false },
-  hasKaitoYaps: { type: Boolean, default: false },
-  joinTime: { type: Date, default: Date.now }
-});
-
-const User = mongoose.model('User', userSchema);
-
-// Thread submission schema (using existing submissions collection)
-const submissionSchema = new mongoose.Schema({
-  xHandle: { type: String, required: true },
-  tweetId: { type: String, required: true },
-  tweetUrl: { type: String, required: true },
-  submittedAt: { type: Date, default: Date.now }
-});
-
-const Submission = mongoose.model('Submission', submissionSchema);
+const User = require('./models/User');
+const Submission = require('./models/Submission');
+const CotiSubmission = require('./models/CotiSubmission');
 
 // ---------- Helpers ----------
 function getTwitterClient() {
@@ -371,6 +343,94 @@ app.post('/api/thread-submissions', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error submitting thread' });
   }
 });
+
+// COTI submission endpoints
+app.get('/api/coti-submissions/status', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({ success: false, message: 'Not authenticated' });
+    }
+
+    const xHandle = req.session.user.xHandle;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const submission = await CotiSubmission.findOne({
+      xHandle: xHandle,
+      submittedAt: {
+        $gte: today,
+        $lt: tomorrow
+      }
+    });
+
+    res.json({
+      success: true,
+      hasSubmittedToday: !!submission
+    });
+  } catch (error) {
+    console.error('Error checking COTI submission status:', error);
+    res.status(500).json({ success: false, message: 'Error checking COTI submission status' });
+  }
+});
+
+app.post('/api/coti-submissions', async (req, res) => {
+  try {
+    if (!req.session.user) {
+      return res.status(401).json({ success: false, message: 'Not authenticated' });
+    }
+
+    const { tweetUrl, tweetId } = req.body;
+    const xHandle = req.session.user.xHandle;
+
+    if (!tweetUrl || !tweetId) {
+      return res.status(400).json({ success: false, message: 'Tweet URL and ID are required' });
+    }
+
+    // Check if user has already submitted today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const existingSubmission = await CotiSubmission.findOne({
+      xHandle: xHandle,
+      submittedAt: {
+        $gte: today,
+        $lt: tomorrow
+      }
+    });
+
+    if (existingSubmission) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'You have already submitted a COTI thread today. Come back tomorrow!' 
+      });
+    }
+
+    // Create new submission
+    const submission = new CotiSubmission({
+      xHandle: xHandle,
+      tweetId: tweetId,
+      tweetUrl: tweetUrl
+    });
+
+    await submission.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'COTI thread submitted successfully',
+      data: submission
+    });
+  } catch (error) {
+    console.error('Error submitting COTI thread:', error);
+    res.status(500).json({ success: false, message: 'Error submitting COTI thread' });
+  }
+});
+
 const PORT = process.env.PORT || 3001;
 
 if (process.env.NODE_ENV !== 'production') {

@@ -18,6 +18,9 @@ const homeSignoutBtn = document.getElementById('homeSignoutBtn');
 const submitThreadBtn = document.getElementById('submitThreadBtn');
 const tweetUrlInput = document.getElementById('tweetUrl');
 const submissionStatus = document.getElementById('submissionStatus');
+const submitCotiThreadBtn = document.getElementById('submitCotiThreadBtn');
+const cotiTweetUrlInput = document.getElementById('cotiTweetUrl');
+const cotiSubmissionStatus = document.getElementById('cotiSubmissionStatus');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -38,6 +41,7 @@ function initializeApp() {
     backToHomeBtn.addEventListener('click', showHome);
     homeSignoutBtn.addEventListener('click', handleSignout);
     submitThreadBtn.addEventListener('click', handleThreadSubmission);
+    submitCotiThreadBtn.addEventListener('click', handleCotiThreadSubmission);
     
     // Add input focus effects
     addInputEffects();
@@ -291,6 +295,7 @@ function showHome() {
     
     // Check if user has already submitted today
     checkDailySubmissionStatus();
+    checkCotiDailySubmissionStatus();
 }
 
 async function showForum() {
@@ -772,6 +777,161 @@ function showSubmissionSuccess() {
 
 function createSubmissionParticles() {
     const rect = submitThreadBtn.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.left = centerX + 'px';
+            particle.style.top = centerY + 'px';
+            particle.style.width = '6px';
+            particle.style.height = '6px';
+            particle.style.background = '#00b894';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '1000';
+            particle.style.transition = 'all 1s ease-out';
+            
+            document.body.appendChild(particle);
+            
+            // Animate particle
+            setTimeout(() => {
+                const angle = (Math.PI * 2 * i) / 15;
+                const distance = 80 + Math.random() * 40;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.opacity = '0';
+                particle.style.transform = 'scale(0)';
+            }, 10);
+            
+            // Remove particle
+            setTimeout(() => {
+                if (document.body.contains(particle)) {
+                    document.body.removeChild(particle);
+                }
+            }, 1000);
+        }, i * 50);
+    }
+}
+
+// COTI Thread submission functionality
+async function checkCotiDailySubmissionStatus() {
+    try {
+        const response = await fetch('/api/coti-submissions/status', {
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.hasSubmittedToday) {
+                showCotiSubmissionStatus('You have already submitted a COTI thread today. Come back tomorrow!', 'info');
+                submitCotiThreadBtn.disabled = true;
+                submitCotiThreadBtn.querySelector('.btn-text').textContent = 'Already Submitted Today';
+            } else {
+                submitCotiThreadBtn.disabled = false;
+                submitCotiThreadBtn.querySelector('.btn-text').textContent = 'Submit Thread';
+            }
+        }
+    } catch (error) {
+        console.error('Error checking COTI submission status:', error);
+    }
+}
+
+async function handleCotiThreadSubmission() {
+    const tweetUrl = cotiTweetUrlInput.value.trim();
+    
+    if (!tweetUrl) {
+        showCotiSubmissionStatus('Please enter a valid thread URL', 'error');
+        return;
+    }
+    
+    // Validate Twitter URL format
+    const twitterRegex = /^https:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+$/;
+    if (!twitterRegex.test(tweetUrl)) {
+        showCotiSubmissionStatus('Please enter a valid Twitter/X thread URL', 'error');
+        return;
+    }
+    
+    try {
+        // Show loading state
+        submitCotiThreadBtn.disabled = true;
+        const btnText = submitCotiThreadBtn.querySelector('.btn-text');
+        btnText.textContent = 'Submitting...';
+        
+        // Extract tweet ID from URL
+        const tweetId = extractTweetId(tweetUrl);
+        
+        // Submit thread
+        const response = await fetch('/api/coti-submissions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                tweetUrl: tweetUrl,
+                tweetId: tweetId
+            }),
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Success animation
+            showCotiSubmissionSuccess();
+            showCotiSubmissionStatus('COTI thread submitted successfully!', 'success');
+            cotiTweetUrlInput.value = '';
+            submitCotiThreadBtn.disabled = true;
+            btnText.textContent = 'Already Submitted Today';
+        } else {
+            throw new Error(data.message || 'Failed to submit COTI thread');
+        }
+        
+    } catch (error) {
+        console.error('Error submitting COTI thread:', error);
+        showCotiSubmissionStatus(error.message || 'Failed to submit COTI thread. Please try again.', 'error');
+        
+        // Reset button
+        submitCotiThreadBtn.disabled = false;
+        submitCotiThreadBtn.querySelector('.btn-text').textContent = 'Submit Thread';
+    }
+}
+
+function showCotiSubmissionStatus(message, type) {
+    cotiSubmissionStatus.textContent = message;
+    cotiSubmissionStatus.className = `submission-status ${type}`;
+    cotiSubmissionStatus.classList.remove('hidden');
+    
+    // Auto-hide after 5 seconds for success/info messages
+    if (type === 'success' || type === 'info') {
+        setTimeout(() => {
+            cotiSubmissionStatus.classList.add('hidden');
+        }, 5000);
+    }
+}
+
+function showCotiSubmissionSuccess() {
+    // Create particle effect
+    createCotiSubmissionParticles();
+    
+    // Add success glow to button
+    submitCotiThreadBtn.style.background = 'linear-gradient(45deg, #00b894, #00a085)';
+    submitCotiThreadBtn.style.boxShadow = '0 0 30px rgba(0, 184, 148, 0.6)';
+    
+    // Reset after animation
+    setTimeout(() => {
+        submitCotiThreadBtn.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
+        submitCotiThreadBtn.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+    }, 2000);
+}
+
+function createCotiSubmissionParticles() {
+    const rect = submitCotiThreadBtn.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     
