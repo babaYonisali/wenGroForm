@@ -1077,6 +1077,8 @@ body {
     text-align: center;
     font-weight: 600;
     animation: slideIn 0.3s ease;
+    position: relative;
+    z-index: 10;
 }
 
 .submission-status.success {
