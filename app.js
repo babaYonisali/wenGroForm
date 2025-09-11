@@ -34,7 +34,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.static('./'));
-app.use('/assets', express.static('./assets'));
+app.use('/assets', express.static(__dirname + '/assets'));
 
 // Secure, signed cookie session that works on Vercel
 app.use(cookieSession({
