@@ -41,7 +41,7 @@ function initializeApp() {
     backToHomeBtn.addEventListener('click', showHome);
     homeSignoutBtn.addEventListener('click', handleSignout);
     submitThreadBtn.addEventListener('click', handleThreadSubmission);
-    submitCotiThreadBtn.addEventListener('click', handleCotiThreadSubmission);
+    // submitCotiThreadBtn.addEventListener('click', handleCotiThreadSubmission); // Commented out - COTI contest not yet active
     
     // Add input focus effects
     addInputEffects();
@@ -295,7 +295,7 @@ function showHome() {
     
     // Check if user has already submitted today
     checkDailySubmissionStatus();
-    checkCotiDailySubmissionStatus();
+    // checkCotiDailySubmissionStatus(); // Commented out - COTI contest not yet active
 }
 
 async function showForum() {
@@ -819,7 +819,8 @@ function createSubmissionParticles() {
     }
 }
 
-// COTI Thread submission functionality
+// COTI Thread submission functionality - COMMENTED OUT (contest not yet active)
+/*
 async function checkCotiDailySubmissionStatus() {
     try {
         const response = await fetch('/api/coti-submissions/status', {
@@ -841,7 +842,9 @@ async function checkCotiDailySubmissionStatus() {
         console.error('Error checking COTI submission status:', error);
     }
 }
+*/
 
+/*
 async function handleCotiThreadSubmission() {
     const tweetUrl = cotiTweetUrlInput.value.trim();
     
@@ -901,7 +904,9 @@ async function handleCotiThreadSubmission() {
         submitCotiThreadBtn.querySelector('.btn-text').textContent = 'Submit Thread';
     }
 }
+*/
 
+/*
 function showCotiSubmissionStatus(message, type) {
     cotiSubmissionStatus.textContent = message;
     cotiSubmissionStatus.className = `submission-status ${type}`;
@@ -972,4 +977,5 @@ function createCotiSubmissionParticles() {
             }, 1000);
         }, i * 50);
     }
-} 
+}
+*/ 
