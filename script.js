@@ -691,7 +691,7 @@ async function handleThreadSubmission() {
     }
     
     // Validate Twitter URL format
-    const twitterRegex = /^https:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+$/;
+    const twitterRegex = /^https:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+(\?.*)?$/;
     if (!twitterRegex.test(tweetUrl)) {
         showSubmissionStatus('Please enter a valid Twitter/X thread URL', 'error');
         return;
@@ -854,7 +854,7 @@ async function handleCotiThreadSubmission() {
     }
     
     // Validate Twitter URL format
-    const twitterRegex = /^https:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+$/;
+    const twitterRegex = /^https:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+(\?.*)?$/;
     if (!twitterRegex.test(tweetUrl)) {
         showCotiSubmissionStatus('Please enter a valid Twitter/X thread URL', 'error');
         return;
