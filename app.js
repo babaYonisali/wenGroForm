@@ -450,7 +450,8 @@ app.get('/api/mavryk-leaderboard', async (req, res) => {
       rank: index + 1,
       name: item.xHandle || 'Unknown',
       mindshare: item.totalImpressions ? `${((item.totalImpressions / 180000)*100).toFixed(2)}K` : '0',
-      avatar: getRandomAvatar(), // Helper function for random avatars
+      avatar: getRandomAvatar(), // Fallback emoji avatar
+      profileImageUrl: item.xHandle ? `https://unavatar.io/twitter/${item.xHandle}` : null,
       isTopThree: index < 3,
       crownType: index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : null,
       xHandle: item.xHandle,

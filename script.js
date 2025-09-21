@@ -1110,7 +1110,16 @@ function displayLeaderboard(data) {
         row.innerHTML = `
             <div class="cell rank-cell">${rankDisplay}</div>
             <div class="cell name-cell">
-                <div class="avatar">${entry.avatar}</div>
+                <div class="avatar">
+                    ${entry.profileImageUrl ? 
+                        `<img src="${entry.profileImageUrl}" 
+                              alt="@${entry.name}" 
+                              class="profile-image"
+                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">` : 
+                        ''
+                    }
+                    <div class="fallback-avatar" style="${entry.profileImageUrl ? 'display:none' : 'display:flex'}">${entry.avatar}</div>
+                </div>
                 <span class="name">
                     ${entry.twitterUrl ? 
                         `<a href="${entry.twitterUrl}" target="_blank" rel="noopener noreferrer" class="twitter-link">@${entry.name}</a>` : 
