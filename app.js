@@ -435,6 +435,24 @@ app.post('/api/coti-submissions', async (req, res) => {
 // ---------- Mavryk Leaderboard API ----------
 app.get('/api/mavryk-leaderboard', async (req, res) => {
   try {
+    // Check if MongoDB is connected
+    if (mongoose.connection.readyState !== 1) {
+      console.log('MongoDB not connected, readyState:', mongoose.connection.readyState);
+      return res.status(503).json({
+        success: false,
+        message: 'Database not ready, please try again in a moment'
+      });
+    }
+
+    // Check if database connection exists
+    if (!mongoose.connection.db) {
+      console.log('MongoDB database object not available');
+      return res.status(503).json({
+        success: false,
+        message: 'Database not ready, please try again in a moment'
+      });
+    }
+
     // Connect to MongoDB and get the mavrykleaderboards collection
     const db = mongoose.connection.db;
     const collection = db.collection('mavrykleaderboards');

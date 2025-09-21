@@ -1046,14 +1046,21 @@ function showMavrykLeaderboard() {
     loadLeaderboardData();
 }
 
-async function loadLeaderboardData() {
+async function loadLeaderboardData(retryCount = 0) {
+    const maxRetries = 3;
+    const retryDelay = 1000; // 1 second base delay
+    
     try {
         // Show loading state
         if (leaderboardTableBody) {
+            const loadingText = retryCount > 0 ? 
+                `Loading leaderboard... (attempt ${retryCount + 1}/${maxRetries + 1})` : 
+                'Loading leaderboard...';
+            
             leaderboardTableBody.innerHTML = `
                 <div class="loading-row">
                     <div class="loading-spinner"></div>
-                    <span>Loading leaderboard...</span>
+                    <span>${loadingText}</span>
                 </div>
             `;
         }
@@ -1062,6 +1069,17 @@ async function loadLeaderboardData() {
         const response = await fetch('/api/mavryk-leaderboard', {
             credentials: 'include'
         });
+        
+        if (response.status === 503) {
+            // Database not ready - retry with exponential backoff
+            if (retryCount < maxRetries) {
+                console.log(`Database not ready, retrying in ${retryDelay * (retryCount + 1)}ms...`);
+                await new Promise(resolve => setTimeout(resolve, retryDelay * (retryCount + 1)));
+                return loadLeaderboardData(retryCount + 1);
+            } else {
+                throw new Error('Database not ready after multiple attempts');
+            }
+        }
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -1078,12 +1096,16 @@ async function loadLeaderboardData() {
     } catch (error) {
         console.error('Error loading leaderboard data:', error);
         
-        // Show error state
+        // Show error state with retry option
         if (leaderboardTableBody) {
+            const errorMessage = error.message.includes('Database not ready') ? 
+                'Database is starting up, please try again' : 
+                'Failed to load leaderboard data';
+            
             leaderboardTableBody.innerHTML = `
                 <div class="error-row">
                     <div class="error-icon">⚠️</div>
-                    <span>Failed to load leaderboard data</span>
+                    <span>${errorMessage}</span>
                     <button onclick="loadLeaderboardData()" class="retry-btn">Retry</button>
                 </div>
             `;
