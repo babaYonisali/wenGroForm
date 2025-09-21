@@ -38,15 +38,15 @@ function initializeApp() {
     // Check for OAuth success parameters
     checkOAuthSuccess();
     
-    // Add event listeners
-    xLoginBtn.addEventListener('click', handleXLogin);
-    userEntryForm.addEventListener('submit', handleUserEntry);
-    communityBtn.addEventListener('click', showForum);
-    backToHomeBtn.addEventListener('click', showHome);
-    backFromLeaderboardBtn.addEventListener('click', showHome);
-    homeSignoutBtn.addEventListener('click', handleSignout);
-    submitThreadBtn.addEventListener('click', handleThreadSubmission);
-    viewMavrykLeaderboardBtn.addEventListener('click', showMavrykLeaderboard);
+    // Add event listeners with null checks
+    if (xLoginBtn) xLoginBtn.addEventListener('click', handleXLogin);
+    if (userEntryForm) userEntryForm.addEventListener('submit', handleUserEntry);
+    if (communityBtn) communityBtn.addEventListener('click', showForum);
+    if (backToHomeBtn) backToHomeBtn.addEventListener('click', showHome);
+    if (backFromLeaderboardBtn) backFromLeaderboardBtn.addEventListener('click', showHome);
+    if (homeSignoutBtn) homeSignoutBtn.addEventListener('click', handleSignout);
+    if (submitThreadBtn) submitThreadBtn.addEventListener('click', handleThreadSubmission);
+    if (viewMavrykLeaderboardBtn) viewMavrykLeaderboardBtn.addEventListener('click', showMavrykLeaderboard);
     // submitCotiThreadBtn.addEventListener('click', handleCotiThreadSubmission); // Commented out - COTI contest not yet active
     
     // Add input focus effects
@@ -290,15 +290,18 @@ function createParticleEffect(element) {
 
 function showHome() {
     // Hide main content and other sections
-    document.querySelector('.main-content').style.display = 'none';
-    forumSection.classList.add('hidden');
-    leaderboardSection.classList.add('hidden');
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) mainContent.style.display = 'none';
+    if (forumSection) forumSection.classList.add('hidden');
+    if (leaderboardSection) leaderboardSection.classList.add('hidden');
     
     // Show home section
-    homeSection.classList.remove('hidden');
+    if (homeSection) homeSection.classList.remove('hidden');
     
     // Update user info
-    homeCurrentUserSpan.textContent = `Welcome, @${xUserData.username}!`;
+    if (homeCurrentUserSpan && xUserData) {
+        homeCurrentUserSpan.textContent = `Welcome, @${xUserData.username}!`;
+    }
     
     // Check if user has already submitted today
     checkDailySubmissionStatus();
@@ -307,14 +310,17 @@ function showHome() {
 
 async function showForum() {
     // Hide main content and home section
-    document.querySelector('.main-content').style.display = 'none';
-    homeSection.classList.add('hidden');
+    const mainContent = document.querySelector('.main-content');
+    if (mainContent) mainContent.style.display = 'none';
+    if (homeSection) homeSection.classList.add('hidden');
     
     // Show forum section
-    forumSection.classList.remove('hidden');
+    if (forumSection) forumSection.classList.remove('hidden');
     
     // Update user info
-    currentUserSpan.textContent = `Welcome, @${xUserData.username}!`;
+    if (currentUserSpan && xUserData) {
+        currentUserSpan.textContent = `Welcome, @${xUserData.username}!`;
+    }
     
     // Fetch all users from the database
     try {
@@ -329,15 +335,17 @@ async function showForum() {
     } catch (error) {
         console.error('Error fetching users:', error);
         const messagesContainer = document.getElementById('messages');
-        messagesContainer.innerHTML = `
-            <div class="message">
-                <div class="message-header">
-                    <span class="message-author system-author">System</span>
-                    <span class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        if (messagesContainer) {
+            messagesContainer.innerHTML = `
+                <div class="message">
+                    <div class="message-header">
+                        <span class="message-author system-author">System</span>
+                        <span class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>
+                    <div class="message-content">Congratulations! You are now part of the WenGro Greenhouse!</div>
                 </div>
-                <div class="message-content">Congratulations! You are now part of the WenGro Greenhouse!</div>
-            </div>
-        `;
+            `;
+        }
     }
 }
 
@@ -376,6 +384,11 @@ async function handleSignout() {
 function displayAllUsers(users) {
     const messagesContainer = document.getElementById('messages');
     
+    if (!messagesContainer) {
+        console.error('Messages container not found');
+        return;
+    }
+    
     // Add congratulations message first
     let html = `
         <div class="message">
@@ -401,7 +414,7 @@ function displayAllUsers(users) {
     // Add each user
     users.forEach((user, index) => {
         const joinDate = new Date(user.joinTime).toLocaleDateString();
-        const isCurrentUser = user.xHandle === xUserData.username;
+        const isCurrentUser = user.xHandle === xUserData?.username;
         const userClass = isCurrentUser ? 'user-author' : 'message-author';
         const highlight = isCurrentUser ? '⭐ ' : '';
         
@@ -677,11 +690,17 @@ async function checkDailySubmissionStatus() {
             const data = await response.json();
             if (data.hasSubmittedToday) {
                 showSubmissionStatus('You have already submitted a thread today. Come back tomorrow!', 'info');
-                submitThreadBtn.disabled = true;
-                submitThreadBtn.querySelector('.btn-text').textContent = 'Already Submitted Today';
+                if (submitThreadBtn) {
+                    submitThreadBtn.disabled = true;
+                    const btnText = submitThreadBtn.querySelector('.btn-text');
+                    if (btnText) btnText.textContent = 'Already Submitted Today';
+                }
             } else {
-                submitThreadBtn.disabled = false;
-                submitThreadBtn.querySelector('.btn-text').textContent = 'Submit Thread';
+                if (submitThreadBtn) {
+                    submitThreadBtn.disabled = false;
+                    const btnText = submitThreadBtn.querySelector('.btn-text');
+                    if (btnText) btnText.textContent = 'Submit Thread';
+                }
             }
         }
     } catch (error) {
@@ -690,6 +709,11 @@ async function checkDailySubmissionStatus() {
 }
 
 async function handleThreadSubmission() {
+    if (!tweetUrlInput) {
+        console.error('Tweet URL input not found');
+        return;
+    }
+    
     const tweetUrl = tweetUrlInput.value.trim();
     
     if (!tweetUrl) {
@@ -706,9 +730,11 @@ async function handleThreadSubmission() {
     
     try {
         // Show loading state
-        submitThreadBtn.disabled = true;
-        const btnText = submitThreadBtn.querySelector('.btn-text');
-        btnText.textContent = 'Submitting...';
+        if (submitThreadBtn) {
+            submitThreadBtn.disabled = true;
+            const btnText = submitThreadBtn.querySelector('.btn-text');
+            if (btnText) btnText.textContent = 'Submitting...';
+        }
         
         // Extract tweet ID from URL
         const tweetId = extractTweetId(tweetUrl);
@@ -732,9 +758,12 @@ async function handleThreadSubmission() {
             // Success animation
             showSubmissionSuccess();
             showSubmissionStatus('Thread submitted successfully!', 'success');
-            tweetUrlInput.value = '';
-            submitThreadBtn.disabled = true;
-            btnText.textContent = 'Already Submitted Today';
+            if (tweetUrlInput) tweetUrlInput.value = '';
+            if (submitThreadBtn) {
+                submitThreadBtn.disabled = true;
+                const btnText = submitThreadBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = 'Already Submitted Today';
+            }
         } else {
             throw new Error(data.message || 'Failed to submit thread');
         }
@@ -744,8 +773,11 @@ async function handleThreadSubmission() {
         showSubmissionStatus(error.message || 'Failed to submit thread. Please try again.', 'error');
         
         // Reset button
-        submitThreadBtn.disabled = false;
-        submitThreadBtn.querySelector('.btn-text').textContent = 'Submit Thread';
+        if (submitThreadBtn) {
+            submitThreadBtn.disabled = false;
+            const btnText = submitThreadBtn.querySelector('.btn-text');
+            if (btnText) btnText.textContent = 'Submit Thread';
+        }
     }
 }
 
@@ -755,6 +787,11 @@ function extractTweetId(url) {
 }
 
 function showSubmissionStatus(message, type) {
+    if (!submissionStatus) {
+        console.error('Submission status element not found');
+        return;
+    }
+    
     submissionStatus.textContent = message;
     submissionStatus.className = `submission-status ${type}`;
     submissionStatus.classList.remove('hidden');
@@ -762,7 +799,9 @@ function showSubmissionStatus(message, type) {
     // Auto-hide after 5 seconds for success/info messages
     if (type === 'success' || type === 'info') {
         setTimeout(() => {
-            submissionStatus.classList.add('hidden');
+            if (submissionStatus) {
+                submissionStatus.classList.add('hidden');
+            }
         }, 5000);
     }
 }
@@ -772,17 +811,23 @@ function showSubmissionSuccess() {
     createSubmissionParticles();
     
     // Add success glow to button
-    submitThreadBtn.style.background = 'linear-gradient(45deg, #00b894, #00a085)';
-    submitThreadBtn.style.boxShadow = '0 0 30px rgba(0, 184, 148, 0.6)';
-    
-    // Reset after animation
-    setTimeout(() => {
-        submitThreadBtn.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
-        submitThreadBtn.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
-    }, 2000);
+    if (submitThreadBtn) {
+        submitThreadBtn.style.background = 'linear-gradient(45deg, #00b894, #00a085)';
+        submitThreadBtn.style.boxShadow = '0 0 30px rgba(0, 184, 148, 0.6)';
+        
+        // Reset after animation
+        setTimeout(() => {
+            if (submitThreadBtn) {
+                submitThreadBtn.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
+                submitThreadBtn.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+            }
+        }, 2000);
+    }
 }
 
 function createSubmissionParticles() {
+    if (!submitThreadBtn) return;
+    
     const rect = submitThreadBtn.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
