@@ -432,6 +432,51 @@ app.post('/api/coti-submissions', async (req, res) => {
   }
 });
 
+// ---------- Mavryk Leaderboard API ----------
+app.get('/api/mavryk-leaderboard', async (req, res) => {
+  try {
+    // Connect to MongoDB and get the mavrykleaderboards collection
+    const db = mongoose.connection.db;
+    const collection = db.collection('mavrykleaderboards');
+    
+    // Fetch all documents, sorted by totalImpressions descending
+    const leaderboardData = await collection
+      .find({})
+      .sort({ totalImpressions: -1 })
+      .toArray();
+    
+    // Transform the data to match our frontend format
+    const transformedData = leaderboardData.map((item, index) => ({
+      rank: index + 1,
+      name: item.xHandle ? item.xHandle.substring(0, 5) + '...' : 'Unknown',
+      mindshare: item.totalImpressions ? `${(item.totalImpressions / 1000).toFixed(2)}K` : '0',
+      avatar: getRandomAvatar(), // Helper function for random avatars
+      isTopThree: index < 3,
+      crownType: index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : null,
+      xHandle: item.xHandle,
+      totalImpressions: item.totalImpressions,
+      tweetCount: item.tweetCount
+    }));
+    
+    res.json({
+      success: true,
+      data: transformedData
+    });
+  } catch (error) {
+    console.error('Error fetching Mavryk leaderboard:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch leaderboard data'
+    });
+  }
+});
+
+// Helper function to get random avatars
+function getRandomAvatar() {
+  const avatars = ['👾', '👨', '🐧', '🎭', '🤖', '🎨', '🎪', '🎯', '🎲', '🎮', '🎵', '🎸', '🚀', '💎', '⚡', '🌙', '🔥'];
+  return avatars[Math.floor(Math.random() * avatars.length)];
+}
+
 const PORT = process.env.PORT || 3001;
 
 if (process.env.NODE_ENV !== 'production') {

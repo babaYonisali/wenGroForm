@@ -1597,6 +1597,56 @@ body {
     left: 100%;
 }
 
+/* Loading and Error States */
+.loading-row,
+.error-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 40px 20px;
+    background: rgba(42, 42, 42, 0.8);
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    border-top: 3px solid #ffd700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-icon {
+    font-size: 1.5rem;
+}
+
+.retry-btn {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #000;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 10px;
+}
+
+.retry-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
 /* Mobile Responsiveness for Leaderboard */
 @media (max-width: 768px) {
     .leaderboard-header {
@@ -1642,6 +1692,13 @@ body {
     
     .rank-number {
         font-size: 1.1rem;
+    }
+    
+    .loading-row,
+    .error-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
     }
 }
 

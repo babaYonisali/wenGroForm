@@ -1046,25 +1046,49 @@ function showMavrykLeaderboard() {
     loadLeaderboardData();
 }
 
-function loadLeaderboardData() {
-    // For now, we'll use mock data since we're focusing on the UI
-    // In a real implementation, this would fetch from an API
-    const mockLeaderboardData = [
-        { rank: 1, name: "Ke...", mindshare: "1.63%", avatar: "👾", isTopThree: true, crownType: "gold" },
-        { rank: 2, name: "jes...", mindshare: "1.15%", avatar: "👨", isTopThree: true, crownType: "silver" },
-        { rank: 3, name: "int...", mindshare: "0.97%", avatar: "🐧", isTopThree: true, crownType: "bronze" },
-        { rank: 4, name: "tun...", mindshare: "0.88%", avatar: "🎭", isTopThree: false },
-        { rank: 5, name: "Ely", mindshare: "0.79%", avatar: "🤖", isTopThree: false },
-        { rank: 6, name: "Dith", mindshare: "0.67%", avatar: "🎨", isTopThree: false },
-        { rank: 7, name: "Phin", mindshare: "0.61%", avatar: "🎪", isTopThree: false },
-        { rank: 8, name: "Ja...", mindshare: "0.60%", avatar: "🎯", isTopThree: false },
-        { rank: 9, name: "Chr...", mindshare: "0.50%", avatar: "🎲", isTopThree: false },
-        { rank: 10, name: "Sp...", mindshare: "0.44%", avatar: "🎮", isTopThree: false },
-        { rank: 11, name: "Ar...", mindshare: "0.41%", avatar: "🎵", isTopThree: false },
-        { rank: 12, name: "Da...", mindshare: "0.38%", avatar: "🎸", isTopThree: false }
-    ];
-    
-    displayLeaderboard(mockLeaderboardData);
+async function loadLeaderboardData() {
+    try {
+        // Show loading state
+        if (leaderboardTableBody) {
+            leaderboardTableBody.innerHTML = `
+                <div class="loading-row">
+                    <div class="loading-spinner"></div>
+                    <span>Loading leaderboard...</span>
+                </div>
+            `;
+        }
+        
+        // Fetch data from MongoDB via API
+        const response = await fetch('/api/mavryk-leaderboard', {
+            credentials: 'include'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            displayLeaderboard(result.data);
+        } else {
+            throw new Error(result.message || 'Failed to load leaderboard data');
+        }
+        
+    } catch (error) {
+        console.error('Error loading leaderboard data:', error);
+        
+        // Show error state
+        if (leaderboardTableBody) {
+            leaderboardTableBody.innerHTML = `
+                <div class="error-row">
+                    <div class="error-icon">⚠️</div>
+                    <span>Failed to load leaderboard data</span>
+                    <button onclick="loadLeaderboardData()" class="retry-btn">Retry</button>
+                </div>
+            `;
+        }
+    }
 }
 
 function displayLeaderboard(data) {
