@@ -1430,29 +1430,6 @@ body {
     letter-spacing: 1px;
 }
 
-.header-cell.sortable {
-    cursor: pointer;
-    transition: all 0.3s ease;
-    padding: 10px;
-    border-radius: 8px;
-}
-
-.header-cell.sortable:hover {
-    background: rgba(255, 215, 0, 0.1);
-    transform: translateY(-2px);
-}
-
-.header-cell.active {
-    background: rgba(255, 215, 0, 0.2);
-    color: #ffffff;
-}
-
-.sort-icon {
-    margin-left: 8px;
-    font-size: 14px;
-    transition: transform 0.3s ease;
-}
-
 .table-body {
     display: flex;
     flex-direction: column;

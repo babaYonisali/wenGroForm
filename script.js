@@ -1124,41 +1124,7 @@ function displayLeaderboard(data) {
         leaderboardTableBody.appendChild(row);
     });
     
-    // Add sorting functionality
-    addLeaderboardSorting();
+    // Sorting functionality removed - headers are now plain text
 }
 
-function addLeaderboardSorting() {
-    const sortableHeaders = document.querySelectorAll('.header-cell.sortable');
-    
-    sortableHeaders.forEach(header => {
-        header.addEventListener('click', function() {
-            const column = this.dataset.column;
-            
-            // Remove active class from all headers
-            sortableHeaders.forEach(h => h.classList.remove('active'));
-            
-            // Add active class to clicked header
-            this.classList.add('active');
-            
-            // Update sort icons
-            updateSortIcons(this, column);
-            
-            // In a real implementation, this would trigger a sort
-            console.log(`Sorting by ${column}`);
-        });
-    });
-}
-
-function updateSortIcons(activeHeader, column) {
-    const allHeaders = document.querySelectorAll('.header-cell.sortable');
-    
-    allHeaders.forEach(header => {
-        const icon = header.querySelector('.sort-icon');
-        if (header === activeHeader) {
-            icon.textContent = '↑'; // or ↓ based on sort direction
-        } else {
-            icon.textContent = '↕';
-        }
-    });
-} 
+// Sorting functions removed - headers are now plain text only 

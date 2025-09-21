@@ -449,7 +449,7 @@ app.get('/api/mavryk-leaderboard', async (req, res) => {
     const transformedData = leaderboardData.map((item, index) => ({
       rank: index + 1,
       name: item.xHandle || 'Unknown',
-      mindshare: item.totalImpressions ? `${(item.totalImpressions / 1000).toFixed(2)}K` : '0',
+      mindshare: item.totalImpressions ? `${(item.totalImpressions / 180000).toFixed(2)}K` : '0',
       avatar: getRandomAvatar(), // Helper function for random avatars
       isTopThree: index < 3,
       crownType: index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : null,
