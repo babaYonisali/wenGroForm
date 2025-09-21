@@ -9,11 +9,13 @@ const xLoginBtn = document.getElementById('xLoginBtn');
 const userEntryForm = document.getElementById('userEntryForm');
 const homeSection = document.getElementById('homeSection');
 const forumSection = document.getElementById('forumSection');
+const leaderboardSection = document.getElementById('leaderboardSection');
 const currentUserSpan = document.getElementById('currentUser');
 const homeCurrentUserSpan = document.getElementById('homeCurrentUser');
 const xHandleInput = document.getElementById('xHandle');
 const communityBtn = document.getElementById('communityBtn');
 const backToHomeBtn = document.getElementById('backToHomeBtn');
+const backFromLeaderboardBtn = document.getElementById('backFromLeaderboardBtn');
 const homeSignoutBtn = document.getElementById('homeSignoutBtn');
 const submitThreadBtn = document.getElementById('submitThreadBtn');
 const tweetUrlInput = document.getElementById('tweetUrl');
@@ -21,6 +23,8 @@ const submissionStatus = document.getElementById('submissionStatus');
 const submitCotiThreadBtn = document.getElementById('submitCotiThreadBtn');
 const cotiTweetUrlInput = document.getElementById('cotiTweetUrl');
 const cotiSubmissionStatus = document.getElementById('cotiSubmissionStatus');
+const viewMavrykLeaderboardBtn = document.getElementById('viewMavrykLeaderboardBtn');
+const leaderboardTableBody = document.getElementById('leaderboardTableBody');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -39,8 +43,10 @@ function initializeApp() {
     userEntryForm.addEventListener('submit', handleUserEntry);
     communityBtn.addEventListener('click', showForum);
     backToHomeBtn.addEventListener('click', showHome);
+    backFromLeaderboardBtn.addEventListener('click', showHome);
     homeSignoutBtn.addEventListener('click', handleSignout);
     submitThreadBtn.addEventListener('click', handleThreadSubmission);
+    viewMavrykLeaderboardBtn.addEventListener('click', showMavrykLeaderboard);
     // submitCotiThreadBtn.addEventListener('click', handleCotiThreadSubmission); // Commented out - COTI contest not yet active
     
     // Add input focus effects
@@ -286,6 +292,7 @@ function showHome() {
     // Hide main content and other sections
     document.querySelector('.main-content').style.display = 'none';
     forumSection.classList.add('hidden');
+    leaderboardSection.classList.add('hidden');
     
     // Show home section
     homeSection.classList.remove('hidden');
@@ -978,4 +985,107 @@ function createCotiSubmissionParticles() {
         }, i * 50);
     }
 }
-*/ 
+*/
+
+// Leaderboard functionality
+function showMavrykLeaderboard() {
+    // Hide main content and other sections
+    document.querySelector('.main-content').style.display = 'none';
+    homeSection.classList.add('hidden');
+    forumSection.classList.add('hidden');
+    
+    // Show leaderboard section
+    leaderboardSection.classList.remove('hidden');
+    
+    // Load and display leaderboard data
+    loadLeaderboardData();
+}
+
+function loadLeaderboardData() {
+    // For now, we'll use mock data since we're focusing on the UI
+    // In a real implementation, this would fetch from an API
+    const mockLeaderboardData = [
+        { rank: 1, name: "Ke...", mindshare: "1.63%", smart: "...", avatar: "👾", isTopThree: true, crownType: "gold" },
+        { rank: 2, name: "jes...", mindshare: "1.15%", smart: "...", avatar: "👨", isTopThree: true, crownType: "silver" },
+        { rank: 3, name: "int...", mindshare: "0.97%", smart: "...", avatar: "🐧", isTopThree: true, crownType: "bronze" },
+        { rank: 4, name: "tun...", mindshare: "0.88%", smart: "...", avatar: "🎭", isTopThree: false },
+        { rank: 5, name: "Ely", mindshare: "0.79%", smart: "...", avatar: "🤖", isTopThree: false },
+        { rank: 6, name: "Dith", mindshare: "0.67%", smart: "...", avatar: "🎨", isTopThree: false },
+        { rank: 7, name: "Phin", mindshare: "0.61%", smart: "...", avatar: "🎪", isTopThree: false },
+        { rank: 8, name: "Ja...", mindshare: "0.60%", smart: "...", avatar: "🎯", isTopThree: false },
+        { rank: 9, name: "Chr...", mindshare: "0.50%", smart: "...", avatar: "🎲", isTopThree: false },
+        { rank: 10, name: "Sp...", mindshare: "0.44%", smart: "...", avatar: "🎮", isTopThree: false },
+        { rank: 11, name: "Ar...", mindshare: "0.41%", smart: "...", avatar: "🎵", isTopThree: false },
+        { rank: 12, name: "Da...", mindshare: "0.38%", smart: "...", avatar: "🎸", isTopThree: false }
+    ];
+    
+    displayLeaderboard(mockLeaderboardData);
+}
+
+function displayLeaderboard(data) {
+    leaderboardTableBody.innerHTML = '';
+    
+    data.forEach((entry, index) => {
+        const row = document.createElement('div');
+        row.className = `table-row ${entry.isTopThree ? 'top-three' : ''} ${entry.crownType || ''}`;
+        
+        let rankDisplay = '';
+        if (entry.isTopThree) {
+            const crownEmoji = entry.crownType === 'gold' ? '👑' : 
+                              entry.crownType === 'silver' ? '🥈' : '🥉';
+            rankDisplay = `<span class="crown-icon">${crownEmoji}</span>`;
+        } else {
+            rankDisplay = `<span class="rank-number">${entry.rank}</span>`;
+        }
+        
+        row.innerHTML = `
+            <div class="cell rank-cell">${rankDisplay}</div>
+            <div class="cell name-cell">
+                <div class="avatar">${entry.avatar}</div>
+                <span class="name">${entry.name}</span>
+            </div>
+            <div class="cell mindshare-cell">${entry.mindshare}</div>
+            <div class="cell smart-cell">${entry.smart}</div>
+        `;
+        
+        leaderboardTableBody.appendChild(row);
+    });
+    
+    // Add sorting functionality
+    addLeaderboardSorting();
+}
+
+function addLeaderboardSorting() {
+    const sortableHeaders = document.querySelectorAll('.header-cell.sortable');
+    
+    sortableHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const column = this.dataset.column;
+            
+            // Remove active class from all headers
+            sortableHeaders.forEach(h => h.classList.remove('active'));
+            
+            // Add active class to clicked header
+            this.classList.add('active');
+            
+            // Update sort icons
+            updateSortIcons(this, column);
+            
+            // In a real implementation, this would trigger a sort
+            console.log(`Sorting by ${column}`);
+        });
+    });
+}
+
+function updateSortIcons(activeHeader, column) {
+    const allHeaders = document.querySelectorAll('.header-cell.sortable');
+    
+    allHeaders.forEach(header => {
+        const icon = header.querySelector('.sort-icon');
+        if (header === activeHeader) {
+            icon.textContent = '↑'; // or ↓ based on sort direction
+        } else {
+            icon.textContent = '↕';
+        }
+    });
+} 

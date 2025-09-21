@@ -193,6 +193,11 @@
                         </div>
                         <div class="campaign-content">
                             <p class="campaign-description">Winner being announced soon! Thank you for your participation!</p>
+                            
+                            <button id="viewMavrykLeaderboardBtn" class="view-leaderboard-btn">
+                                <span class="btn-text">View Leaderboard</span>
+                                <span class="btn-glow"></span>
+                            </button>
                         </div>
                     </div>
                     
@@ -234,6 +239,51 @@
             <div class="chat-container">
                 <div id="messages" class="messages">
                     <!-- Congratulations message will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section (shown when user clicks View Leaderboard) -->
+        <div id="leaderboardSection" class="leaderboard-section hidden">
+            <div class="leaderboard-header">
+                <h2>Creator Leaderboard</h2>
+                <div class="leaderboard-controls">
+                    <div class="time-filter">
+                        <button class="time-filter-btn active" data-period="3M">
+                            <span>3M</span>
+                            <span class="chevron">▼</span>
+                        </button>
+                    </div>
+                    <button id="backFromLeaderboardBtn" class="back-btn">
+                        <span class="btn-text">← Back to Home</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="leaderboard-container">
+                <div class="leaderboard-table">
+                    <div class="table-header">
+                        <div class="header-cell sortable" data-column="rank">
+                            <span>Rank</span>
+                            <span class="sort-icon">↕</span>
+                        </div>
+                        <div class="header-cell sortable" data-column="name">
+                            <span>Name</span>
+                            <span class="sort-icon">↕</span>
+                        </div>
+                        <div class="header-cell sortable active" data-column="mindshare">
+                            <span>Mindshare</span>
+                            <span class="sort-icon">↕</span>
+                        </div>
+                        <div class="header-cell sortable" data-column="smart">
+                            <span>Smart</span>
+                            <span class="sort-icon">↕</span>
+                        </div>
+                    </div>
+                    
+                    <div class="table-body" id="leaderboardTableBody">
+                        <!-- Leaderboard entries will be populated here -->
+                    </div>
                 </div>
             </div>
         </div>
