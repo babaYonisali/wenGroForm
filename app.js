@@ -448,14 +448,15 @@ app.get('/api/mavryk-leaderboard', async (req, res) => {
     // Transform the data to match our frontend format
     const transformedData = leaderboardData.map((item, index) => ({
       rank: index + 1,
-      name: item.xHandle ? item.xHandle.substring(0, 5) + '...' : 'Unknown',
+      name: item.xHandle || 'Unknown',
       mindshare: item.totalImpressions ? `${(item.totalImpressions / 1000).toFixed(2)}K` : '0',
       avatar: getRandomAvatar(), // Helper function for random avatars
       isTopThree: index < 3,
       crownType: index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : null,
       xHandle: item.xHandle,
       totalImpressions: item.totalImpressions,
-      tweetCount: item.tweetCount
+      tweetCount: item.tweetCount,
+      twitterUrl: item.xHandle ? `https://twitter.com/${item.xHandle}` : null
     }));
     
     res.json({

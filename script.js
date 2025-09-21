@@ -1111,7 +1111,12 @@ function displayLeaderboard(data) {
             <div class="cell rank-cell">${rankDisplay}</div>
             <div class="cell name-cell">
                 <div class="avatar">${entry.avatar}</div>
-                <span class="name">${entry.name}</span>
+                <span class="name">
+                    ${entry.twitterUrl ? 
+                        `<a href="${entry.twitterUrl}" target="_blank" rel="noopener noreferrer" class="twitter-link">@${entry.name}</a>` : 
+                        `@${entry.name}`
+                    }
+                </span>
             </div>
             <div class="cell mindshare-cell">${entry.mindshare}</div>
         `;

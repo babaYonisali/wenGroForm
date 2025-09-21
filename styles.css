@@ -1544,6 +1544,24 @@ body {
     font-weight: 600;
 }
 
+.twitter-link {
+    color: #1da1f2;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.twitter-link:hover {
+    color: #0d8bd9;
+    text-decoration: underline;
+    text-shadow: 0 0 10px rgba(29, 161, 242, 0.3);
+    transform: translateY(-1px);
+}
+
+.twitter-link:visited {
+    color: #1da1f2;
+}
+
 .mindshare-cell {
     font-size: 1.2rem;
     color: #00ff88;
@@ -1684,6 +1702,10 @@ body {
     
     .name {
         font-size: 1rem;
+    }
+    
+    .twitter-link {
+        font-size: 0.95rem;
     }
     
     .crown-icon {
