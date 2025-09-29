@@ -47,7 +47,7 @@ function initializeApp() {
     if (homeSignoutBtn) homeSignoutBtn.addEventListener('click', handleSignout);
     if (submitThreadBtn) submitThreadBtn.addEventListener('click', handleThreadSubmission);
     if (viewMavrykLeaderboardBtn) viewMavrykLeaderboardBtn.addEventListener('click', showMavrykLeaderboard);
-    // submitCotiThreadBtn.addEventListener('click', handleCotiThreadSubmission); // Commented out - COTI contest not yet active
+    if (submitCotiThreadBtn) submitCotiThreadBtn.addEventListener('click', handleCotiThreadSubmission);
     
     // Add input focus effects
     addInputEffects();
@@ -305,7 +305,7 @@ function showHome() {
     
     // Check if user has already submitted today
     checkDailySubmissionStatus();
-    // checkCotiDailySubmissionStatus(); // Commented out - COTI contest not yet active
+    checkCotiDailySubmissionStatus();
 }
 
 async function showForum() {
@@ -871,8 +871,7 @@ function createSubmissionParticles() {
     }
 }
 
-// COTI Thread submission functionality - COMMENTED OUT (contest not yet active)
-/*
+// COTI Thread submission functionality
 async function checkCotiDailySubmissionStatus() {
     try {
         const response = await fetch('/api/coti-submissions/status', {
@@ -883,21 +882,30 @@ async function checkCotiDailySubmissionStatus() {
             const data = await response.json();
             if (data.hasSubmittedToday) {
                 showCotiSubmissionStatus('You have already submitted a COTI thread today. Come back tomorrow!', 'info');
-                submitCotiThreadBtn.disabled = true;
-                submitCotiThreadBtn.querySelector('.btn-text').textContent = 'Already Submitted Today';
+                if (submitCotiThreadBtn) {
+                    submitCotiThreadBtn.disabled = true;
+                    const btnText = submitCotiThreadBtn.querySelector('.btn-text');
+                    if (btnText) btnText.textContent = 'Already Submitted Today';
+                }
             } else {
-                submitCotiThreadBtn.disabled = false;
-                submitCotiThreadBtn.querySelector('.btn-text').textContent = 'Submit Thread';
+                if (submitCotiThreadBtn) {
+                    submitCotiThreadBtn.disabled = false;
+                    const btnText = submitCotiThreadBtn.querySelector('.btn-text');
+                    if (btnText) btnText.textContent = 'Submit Thread';
+                }
             }
         }
     } catch (error) {
         console.error('Error checking COTI submission status:', error);
     }
 }
-*/
 
-/*
 async function handleCotiThreadSubmission() {
+    if (!cotiTweetUrlInput) {
+        console.error('COTI tweet URL input not found');
+        return;
+    }
+    
     const tweetUrl = cotiTweetUrlInput.value.trim();
     
     if (!tweetUrl) {
@@ -914,9 +922,11 @@ async function handleCotiThreadSubmission() {
     
     try {
         // Show loading state
-        submitCotiThreadBtn.disabled = true;
-        const btnText = submitCotiThreadBtn.querySelector('.btn-text');
-        btnText.textContent = 'Submitting...';
+        if (submitCotiThreadBtn) {
+            submitCotiThreadBtn.disabled = true;
+            const btnText = submitCotiThreadBtn.querySelector('.btn-text');
+            if (btnText) btnText.textContent = 'Submitting...';
+        }
         
         // Extract tweet ID from URL
         const tweetId = extractTweetId(tweetUrl);
@@ -940,9 +950,12 @@ async function handleCotiThreadSubmission() {
             // Success animation
             showCotiSubmissionSuccess();
             showCotiSubmissionStatus('COTI thread submitted successfully!', 'success');
-            cotiTweetUrlInput.value = '';
-            submitCotiThreadBtn.disabled = true;
-            btnText.textContent = 'Already Submitted Today';
+            if (cotiTweetUrlInput) cotiTweetUrlInput.value = '';
+            if (submitCotiThreadBtn) {
+                submitCotiThreadBtn.disabled = true;
+                const btnText = submitCotiThreadBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = 'Already Submitted Today';
+            }
         } else {
             throw new Error(data.message || 'Failed to submit COTI thread');
         }
@@ -952,14 +965,20 @@ async function handleCotiThreadSubmission() {
         showCotiSubmissionStatus(error.message || 'Failed to submit COTI thread. Please try again.', 'error');
         
         // Reset button
-        submitCotiThreadBtn.disabled = false;
-        submitCotiThreadBtn.querySelector('.btn-text').textContent = 'Submit Thread';
+        if (submitCotiThreadBtn) {
+            submitCotiThreadBtn.disabled = false;
+            const btnText = submitCotiThreadBtn.querySelector('.btn-text');
+            if (btnText) btnText.textContent = 'Submit Thread';
+        }
     }
 }
-*/
 
-/*
 function showCotiSubmissionStatus(message, type) {
+    if (!cotiSubmissionStatus) {
+        console.error('COTI submission status element not found');
+        return;
+    }
+    
     cotiSubmissionStatus.textContent = message;
     cotiSubmissionStatus.className = `submission-status ${type}`;
     cotiSubmissionStatus.classList.remove('hidden');
@@ -967,7 +986,9 @@ function showCotiSubmissionStatus(message, type) {
     // Auto-hide after 5 seconds for success/info messages
     if (type === 'success' || type === 'info') {
         setTimeout(() => {
-            cotiSubmissionStatus.classList.add('hidden');
+            if (cotiSubmissionStatus) {
+                cotiSubmissionStatus.classList.add('hidden');
+            }
         }, 5000);
     }
 }
@@ -977,17 +998,23 @@ function showCotiSubmissionSuccess() {
     createCotiSubmissionParticles();
     
     // Add success glow to button
-    submitCotiThreadBtn.style.background = 'linear-gradient(45deg, #00b894, #00a085)';
-    submitCotiThreadBtn.style.boxShadow = '0 0 30px rgba(0, 184, 148, 0.6)';
-    
-    // Reset after animation
-    setTimeout(() => {
-        submitCotiThreadBtn.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
-        submitCotiThreadBtn.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
-    }, 2000);
+    if (submitCotiThreadBtn) {
+        submitCotiThreadBtn.style.background = 'linear-gradient(45deg, #00b894, #00a085)';
+        submitCotiThreadBtn.style.boxShadow = '0 0 30px rgba(0, 184, 148, 0.6)';
+        
+        // Reset after animation
+        setTimeout(() => {
+            if (submitCotiThreadBtn) {
+                submitCotiThreadBtn.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
+                submitCotiThreadBtn.style.boxShadow = '0 8px 25px rgba(255, 215, 0, 0.3)';
+            }
+        }, 2000);
+    }
 }
 
 function createCotiSubmissionParticles() {
+    if (!submitCotiThreadBtn) return;
+    
     const rect = submitCotiThreadBtn.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -1030,7 +1057,6 @@ function createCotiSubmissionParticles() {
         }, i * 50);
     }
 }
-*/
 
 // Leaderboard functionality
 function showMavrykLeaderboard() {
