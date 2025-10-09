@@ -1698,40 +1698,62 @@ body {
     
     .table-header,
     .table-row {
-        grid-template-columns: 60px 1fr 100px;
-        gap: 10px;
-        padding: 12px 15px;
+        grid-template-columns: 50px 1fr 80px;
+        gap: 8px;
+        padding: 10px 12px;
     }
     
     .header-cell,
     .cell {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     
     .avatar {
-        width: 35px;
-        height: 35px;
-        font-size: 1.2rem;
-    }
-    
-    .fallback-avatar {
-        font-size: 1.2rem;
-    }
-    
-    .name {
+        width: 30px;
+        height: 30px;
         font-size: 1rem;
     }
     
+    .fallback-avatar {
+        font-size: 1rem;
+    }
+    
+    .name {
+        font-size: 0.9rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+    
     .twitter-link {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+        display: block;
     }
     
     .crown-icon {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
     
     .rank-number {
-        font-size: 1.1rem;
+        font-size: 1rem;
+    }
+    
+    .mindshare-cell {
+        font-size: 1rem;
+        text-align: right;
+        justify-self: end;
+        min-width: 80px;
+    }
+    
+    .name-cell {
+        justify-content: flex-start;
+        gap: 8px;
+        overflow: hidden;
     }
     
     .loading-row,
@@ -1739,6 +1761,64 @@ body {
         flex-direction: column;
         text-align: center;
         gap: 10px;
+    }
+}
+
+/* Additional mobile optimizations for very small screens */
+@media (max-width: 480px) {
+    .leaderboard-section {
+        padding: 10px;
+    }
+    
+    .leaderboard-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .table-header,
+    .table-row {
+        grid-template-columns: 40px 1fr 70px;
+        gap: 6px;
+        padding: 8px 10px;
+    }
+    
+    .header-cell,
+    .cell {
+        font-size: 0.8rem;
+    }
+    
+    .avatar {
+        width: 25px;
+        height: 25px;
+        font-size: 0.9rem;
+    }
+    
+    .fallback-avatar {
+        font-size: 0.9rem;
+    }
+    
+    .name {
+        font-size: 0.8rem;
+    }
+    
+    .twitter-link {
+        font-size: 0.8rem;
+    }
+    
+    .crown-icon {
+        font-size: 1rem;
+    }
+    
+    .rank-number {
+        font-size: 0.9rem;
+    }
+    
+    .mindshare-cell {
+        font-size: 0.9rem;
+        min-width: 70px;
+    }
+    
+    .name-cell {
+        gap: 6px;
     }
 }
 
