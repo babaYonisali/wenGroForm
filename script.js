@@ -305,7 +305,7 @@ function showHome() {
     
     // Check if user has already submitted today
     checkDailySubmissionStatus();
-    checkCotiDailySubmissionStatus();
+    // COTI campaign is complete, no need to check submission status
 }
 
 async function showForum() {
