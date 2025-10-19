@@ -469,7 +469,8 @@ app.get('/api/mavryk-leaderboard', async (req, res) => {
       name: item.xHandle || 'Unknown',
       mindshare: item.totalImpressions ? `${((item.totalImpressions / 180000)*100).toFixed(2)}K` : '0',
       avatar: getRandomAvatar(), // Fallback emoji avatar
-      profileImageUrl: item.xHandle ? `https://unavatar.io/twitter/${item.xHandle}` : null,
+      profileImageUrl: item.xHandle ? getProfilePictureFallbacks(item.xHandle)[0] : null,
+      profileImageFallbacks: item.xHandle ? getProfilePictureFallbacks(item.xHandle) : [],
       isTopThree: index < 3,
       crownType: index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : null,
       xHandle: item.xHandle,
@@ -528,7 +529,8 @@ app.get('/api/coti-leaderboard', async (req, res) => {
       name: item.xHandle || 'Unknown',
       mindshare: item.totalImpressions ? `${((item.totalImpressions / 180000)*100).toFixed(2)}K` : '0',
       avatar: getRandomAvatar(), // Fallback emoji avatar
-      profileImageUrl: item.xHandle ? `https://unavatar.io/twitter/${item.xHandle}` : null,
+      profileImageUrl: item.xHandle ? getProfilePictureFallbacks(item.xHandle)[0] : null,
+      profileImageFallbacks: item.xHandle ? getProfilePictureFallbacks(item.xHandle) : [],
       isTopThree: index < 3,
       crownType: index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : null,
       xHandle: item.xHandle,
@@ -554,6 +556,16 @@ app.get('/api/coti-leaderboard', async (req, res) => {
 function getRandomAvatar() {
   const avatars = ['👾', '👨', '🐧', '🎭', '🤖', '🎨', '🎪', '🎯', '🎲', '🎮', '🎵', '🎸', '🚀', '💎', '⚡', '🌙', '🔥'];
   return avatars[Math.floor(Math.random() * avatars.length)];
+}
+
+// Helper function to get profile picture fallbacks
+function getProfilePictureFallbacks(xHandle) {
+  return [
+    `https://unavatar.io/twitter/${xHandle}`,
+    `https://api.dicebear.com/7.x/avataaars/svg?seed=${xHandle}`,
+    `https://robohash.org/${xHandle}?set=set1&size=100x100`,
+    `https://ui-avatars.com/api/?name=${encodeURIComponent(xHandle)}&background=ffd700&color=000&size=100`
+  ];
 }
 
 const PORT = process.env.PORT || 3001;

@@ -1252,7 +1252,8 @@ function displayLeaderboard(data) {
                         `<img src="${entry.profileImageUrl}" 
                               alt="@${entry.name}" 
                               class="profile-image"
-                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">` : 
+                              data-fallbacks='${JSON.stringify(entry.profileImageFallbacks || [])}'
+                              onerror="handleImageError(this)">` : 
                         ''
                     }
                     <div class="fallback-avatar" style="${entry.profileImageUrl ? 'display:none' : 'display:flex'}">${entry.avatar}</div>
@@ -1297,7 +1298,8 @@ function displayCotiLeaderboard(data) {
                         `<img src="${entry.profileImageUrl}" 
                               alt="@${entry.name}" 
                               class="profile-image"
-                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">` : 
+                              data-fallbacks='${JSON.stringify(entry.profileImageFallbacks || [])}'
+                              onerror="handleImageError(this)">` : 
                         ''
                     }
                     <div class="fallback-avatar" style="${entry.profileImageUrl ? 'display:none' : 'display:flex'}">${entry.avatar}</div>
@@ -1318,4 +1320,25 @@ function displayCotiLeaderboard(data) {
     // Sorting functionality removed - headers are now plain text
 }
 
-// Sorting functions removed - headers are now plain text only 
+// Sorting functions removed - headers are now plain text only
+
+// Enhanced image error handling with multiple fallbacks
+function handleImageError(img) {
+    const fallbacks = JSON.parse(img.getAttribute('data-fallbacks') || '[]');
+    const currentSrc = img.src;
+    
+    // Find current fallback index
+    const currentIndex = fallbacks.indexOf(currentSrc);
+    
+    if (currentIndex < fallbacks.length - 1) {
+        // Try next fallback
+        img.src = fallbacks[currentIndex + 1];
+    } else {
+        // All fallbacks failed, show emoji avatar
+        img.style.display = 'none';
+        const fallbackAvatar = img.nextElementSibling;
+        if (fallbackAvatar) {
+            fallbackAvatar.style.display = 'flex';
+        }
+    }
+} 
