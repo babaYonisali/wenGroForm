@@ -163,6 +163,11 @@
                                     <div class="announcement-date">Sunday, October 19th</div>
                                 </div>
                             </div>
+                            
+                            <button id="viewCotiLeaderboardBtn" class="view-leaderboard-btn">
+                                <span class="btn-text">View Leaderboard</span>
+                                <span class="btn-glow"></span>
+                            </button>
                         </div>
                     </div>
                     
@@ -237,7 +242,7 @@
             </div>
         </div>
 
-        <!-- Leaderboard Section (shown when user clicks View Leaderboard) -->
+        <!-- Mavryk Leaderboard Section (shown when user clicks View Leaderboard) -->
         <div id="leaderboardSection" class="leaderboard-section hidden">
             <div class="leaderboard-header">
                 <h2>Mavryk Leaderboard</h2>
@@ -264,6 +269,38 @@
                     
                     <div class="table-body" id="leaderboardTableBody">
                         <!-- Leaderboard entries will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COTI Leaderboard Section (shown when user clicks View COTI Leaderboard) -->
+        <div id="cotiLeaderboardSection" class="leaderboard-section hidden">
+            <div class="leaderboard-header">
+                <h2>COTI Leaderboard</h2>
+                <div class="leaderboard-controls">
+                    <button id="backFromCotiLeaderboardBtn" class="back-btn">
+                        <span class="btn-text">← Back to Home</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="leaderboard-container">
+                <div class="leaderboard-table">
+                    <div class="table-header">
+                        <div class="header-cell">
+                            <span>Rank</span>
+                        </div>
+                        <div class="header-cell">
+                            <span>Name</span>
+                        </div>
+                        <div class="header-cell">
+                            <span>Mindshare</span>
+                        </div>
+                    </div>
+                    
+                    <div class="table-body" id="cotiLeaderboardTableBody">
+                        <!-- COTI Leaderboard entries will be populated here -->
                     </div>
                 </div>
             </div>

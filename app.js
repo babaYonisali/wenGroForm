@@ -491,6 +491,65 @@ app.get('/api/mavryk-leaderboard', async (req, res) => {
   }
 });
 
+// ---------- COTI Leaderboard API ----------
+app.get('/api/coti-leaderboard', async (req, res) => {
+  try {
+    // Check if MongoDB is connected
+    if (mongoose.connection.readyState !== 1) {
+      console.log('MongoDB not connected, readyState:', mongoose.connection.readyState);
+      return res.status(503).json({
+        success: false,
+        message: 'Database not ready, please try again in a moment'
+      });
+    }
+
+    // Check if database connection exists
+    if (!mongoose.connection.db) {
+      console.log('MongoDB database object not available');
+      return res.status(503).json({
+        success: false,
+        message: 'Database not ready, please try again in a moment'
+      });
+    }
+
+    // Connect to MongoDB and get the cotiLeaderboard collection
+    const db = mongoose.connection.db;
+    const collection = db.collection('cotiLeaderboard');
+    
+    // Fetch all documents, sorted by totalImpressions descending
+    const leaderboardData = await collection
+      .find({})
+      .sort({ totalImpressions: -1 })
+      .toArray();
+    
+    // Transform the data to match our frontend format
+    const transformedData = leaderboardData.map((item, index) => ({
+      rank: index + 1,
+      name: item.xHandle || 'Unknown',
+      mindshare: item.totalImpressions ? `${((item.totalImpressions / 180000)*100).toFixed(2)}K` : '0',
+      avatar: getRandomAvatar(), // Fallback emoji avatar
+      profileImageUrl: item.xHandle ? `https://unavatar.io/twitter/${item.xHandle}` : null,
+      isTopThree: index < 3,
+      crownType: index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : null,
+      xHandle: item.xHandle,
+      totalImpressions: item.totalImpressions,
+      tweetCount: item.tweetCount,
+      twitterUrl: item.xHandle ? `https://twitter.com/${item.xHandle}` : null
+    }));
+    
+    res.json({
+      success: true,
+      data: transformedData
+    });
+  } catch (error) {
+    console.error('Error fetching COTI leaderboard:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch COTI leaderboard data'
+    });
+  }
+});
+
 // Helper function to get random avatars
 function getRandomAvatar() {
   const avatars = ['👾', '👨', '🐧', '🎭', '🤖', '🎨', '🎪', '🎯', '🎲', '🎮', '🎵', '🎸', '🚀', '💎', '⚡', '🌙', '🔥'];
