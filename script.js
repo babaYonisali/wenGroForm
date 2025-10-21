@@ -61,18 +61,6 @@ function initializeApp() {
 
 async function checkAuthStatus() {
     try {
-        // Check if we're in the middle of OAuth flow
-        const urlParams = new URLSearchParams(window.location.search);
-        const loginSuccess = urlParams.get('login');
-        const xHandle = urlParams.get('xHandle');
-        
-        // If we have OAuth success parameters, we're coming back from Twitter
-        if (loginSuccess === 'success' && xHandle) {
-            console.log('OAuth success detected, processing...');
-            // Don't redirect to login, let the OAuth success handler deal with it
-            return;
-        }
-        
         // Use the new /api/me endpoint
         const response = await fetch('/api/me', {
             credentials: 'include'
