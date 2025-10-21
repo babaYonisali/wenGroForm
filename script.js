@@ -1372,47 +1372,72 @@ function initializeSpinWheel() {
     console.log('spinWheel element:', spinWheel);
     console.log('spinWheelBtn element:', spinWheelBtn);
     
-    // Reset wheel to 0 degrees on initialization
-    if (spinWheel) {
-        spinWheel.style.transform = 'rotate(0deg)';
-        wheelRotation = 0;
-        
-        // Add click to wheel for spinning
-        spinWheel.addEventListener('click', handleWheelSpin);
-        console.log('Added click listener to wheel');
-    } else {
-        console.error('spinWheel element not found!');
+    // Check if elements exist
+    if (!spinWheel) {
+        console.error('spinWheel element not found! Retrying in 100ms...');
+        setTimeout(initializeSpinWheel, 100);
+        return;
     }
     
-    if (spinWheelBtn) {
-        spinWheelBtn.addEventListener('click', handleWheelSpin);
-        console.log('Added click listener to button');
-    } else {
-        console.error('spinWheelBtn element not found!');
+    if (!spinWheelBtn) {
+        console.error('spinWheelBtn element not found! Retrying in 100ms...');
+        setTimeout(initializeSpinWheel, 100);
+        return;
     }
+    
+    // Reset wheel to 0 degrees on initialization
+    spinWheel.style.transform = 'rotate(0deg)';
+    wheelRotation = 0;
+    
+    // Add click to wheel for spinning
+    spinWheel.addEventListener('click', handleWheelSpin);
+    console.log('Added click listener to wheel');
+    
+    spinWheelBtn.addEventListener('click', handleWheelSpin);
+    console.log('Added click listener to button');
     
     // Load leaderboard data and create proportional wheel
     loadLeaderboardForWheel();
+    
+    // Add a safety timeout to ensure wheel is populated even if API fails silently
+    setTimeout(() => {
+        if (!spinWheel.style.background || spinWheel.style.background === '') {
+            console.log('Safety timeout: Wheel not populated, forcing fallback creation');
+            createEqualSectionsWheel();
+        }
+    }, 2000);
 }
 
 async function loadLeaderboardForWheel() {
     try {
+        console.log('Attempting to load leaderboard data for wheel...');
         const response = await fetch('/api/coti-leaderboard', {
             credentials: 'include'
         });
         
+        console.log('API response status:', response.status);
+        
         if (response.ok) {
             const result = await response.json();
+            console.log('API response data:', result);
             if (result.success && result.data) {
                 leaderboardData = result.data;
+                console.log('Creating proportional wheel with', result.data.length, 'entries');
                 createProportionalWheel(result.data);
+                return;
+            } else {
+                console.log('API returned success=false or no data, using fallback');
             }
+        } else {
+            console.log('API request failed with status:', response.status);
         }
     } catch (error) {
         console.error('Error loading leaderboard for wheel:', error);
-        // Fallback to equal sections if leaderboard fails
-        createEqualSectionsWheel();
     }
+    
+    // Fallback to equal sections if leaderboard fails
+    console.log('Using fallback: creating equal sections wheel');
+    createEqualSectionsWheel();
 }
 
 function createProportionalWheel(data) {
@@ -1474,6 +1499,8 @@ function createProportionalWheel(data) {
 }
 
 function createEqualSectionsWheel() {
+    console.log('Creating equal sections wheel as fallback...');
+    
     // Fallback: create 13 equal sections
     const sections = [];
     const angleSize = 360 / 13;
@@ -1489,6 +1516,7 @@ function createEqualSectionsWheel() {
         });
     }
     
+    console.log('Created', sections.length, 'equal sections for fallback wheel');
     updateWheelSections(sections);
 }
 
@@ -1505,7 +1533,12 @@ function updateWheelSections(sections) {
     console.log('Updating wheel sections:', sections);
     
     if (!spinWheel) {
-        console.log('Spin wheel element not found!');
+        console.error('Spin wheel element not found! Cannot update sections.');
+        return;
+    }
+    
+    if (!sections || sections.length === 0) {
+        console.error('No sections provided to updateWheelSections!');
         return;
     }
     
@@ -1534,6 +1567,16 @@ function updateWheelSections(sections) {
 
 function updateSectionNumbers(sections) {
     console.log('Updating section numbers for', sections.length, 'sections');
+    
+    if (!spinWheel) {
+        console.error('Spin wheel element not found! Cannot update section numbers.');
+        return;
+    }
+    
+    if (!sections || sections.length === 0) {
+        console.error('No sections provided to updateSectionNumbers!');
+        return;
+    }
     
     // Remove existing section numbers
     const existingSections = spinWheel.querySelectorAll('.wheel-section');
