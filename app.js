@@ -28,7 +28,8 @@ app.use(cors({
   origin: [
     FRONTEND_URL,
     'https://wen-gro-form-git-dev-yonis-projects-dee17595.vercel.app',
-    'https://community.wengro.com'
+    'https://community.wengro.com',
+    'http://localhost:3001'
   ],
   credentials: true
 }));
@@ -77,7 +78,9 @@ app.get('/auth/x/start', async (req, res) => {
     const isProduction = origin.includes('community.wengro.com');
     const callbackUrl = isProduction 
       ? 'https://community.wengro.com/auth/x/callback'
-      : 'https://wen-gro-form-git-dev-yonis-projects-dee17595.vercel.app/auth/x/callback';
+      : origin.includes('localhost')
+        ? 'http://localhost:3001/auth/x/callback'
+        : 'https://wen-gro-form-git-dev-yonis-projects-dee17595.vercel.app/auth/x/callback';
 
     const { url, codeVerifier, state } = client.generateOAuth2AuthLink(
       callbackUrl,

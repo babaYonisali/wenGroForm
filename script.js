@@ -1346,13 +1346,32 @@ function handleImageError(img) {
 // Spin Wheel functionality
 let isWheelSpinning = false;
 let wheelRotation = 0;
+let leaderboardData = null;
+let normalizedLeaderboardData = null;
 
 // DOM elements for spin wheel
-const spinWheel = document.getElementById('spinWheel');
-const spinWheelBtn = document.getElementById('spinWheelBtn');
+let spinWheel, spinWheelBtn;
+
+// Initialize DOM elements
+function initializeDOMElements() {
+    spinWheel = document.getElementById('spinWheel');
+    spinWheelBtn = document.getElementById('spinWheelBtn');
+    
+    console.log('DOM elements initialized:');
+    console.log('- spinWheel:', spinWheel);
+    console.log('- spinWheelBtn:', spinWheelBtn);
+}
 
 // Initialize spin wheel functionality
 function initializeSpinWheel() {
+    console.log('Initializing spin wheel...');
+    
+    // Initialize DOM elements first
+    initializeDOMElements();
+    
+    console.log('spinWheel element:', spinWheel);
+    console.log('spinWheelBtn element:', spinWheelBtn);
+    
     // Reset wheel to 0 degrees on initialization
     if (spinWheel) {
         spinWheel.style.transform = 'rotate(0deg)';
@@ -1360,11 +1379,192 @@ function initializeSpinWheel() {
         
         // Add click to wheel for spinning
         spinWheel.addEventListener('click', handleWheelSpin);
+        console.log('Added click listener to wheel');
+    } else {
+        console.error('spinWheel element not found!');
     }
     
     if (spinWheelBtn) {
         spinWheelBtn.addEventListener('click', handleWheelSpin);
+        console.log('Added click listener to button');
+    } else {
+        console.error('spinWheelBtn element not found!');
     }
+    
+    // Load leaderboard data and create proportional wheel
+    loadLeaderboardForWheel();
+}
+
+async function loadLeaderboardForWheel() {
+    try {
+        const response = await fetch('/api/coti-leaderboard', {
+            credentials: 'include'
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+                leaderboardData = result.data;
+                createProportionalWheel(result.data);
+            }
+        }
+    } catch (error) {
+        console.error('Error loading leaderboard for wheel:', error);
+        // Fallback to equal sections if leaderboard fails
+        createEqualSectionsWheel();
+    }
+}
+
+function createProportionalWheel(data) {
+    if (!data || data.length === 0) {
+        createEqualSectionsWheel();
+        return;
+    }
+    
+    // Normalize the data to reduce extreme differences
+    const impressions = data.map(entry => entry.totalImpressions || 0);
+    const minImpressions = Math.min(...impressions);
+    const maxImpressions = Math.max(...impressions);
+    
+    console.log('Raw impressions range:', minImpressions, 'to', maxImpressions);
+    
+    // Apply logarithmic normalization to compress the range
+    const normalizedData = data.map(entry => {
+        const rawValue = entry.totalImpressions || 0;
+        // Use log scale to compress differences, add 1 to avoid log(0)
+        const logValue = Math.log(rawValue + 1);
+        return {
+            ...entry,
+            normalizedValue: logValue
+        };
+    });
+    
+    // Calculate total normalized value
+    const totalNormalized = normalizedData.reduce((sum, entry) => sum + entry.normalizedValue, 0);
+    console.log('Total normalized value:', totalNormalized);
+    
+    // Create proportional sections
+    const sections = [];
+    let currentAngle = 0;
+    
+    normalizedData.forEach((entry, index) => {
+        const totalImpressions = entry.totalImpressions || 0;
+        const normalizedValue = entry.normalizedValue;
+        const angleSize = (normalizedValue / totalNormalized) * 360;
+        
+        sections.push({
+            name: entry.name,
+            mindshare: entry.mindshare,
+            totalImpressions: totalImpressions,
+            normalizedValue: normalizedValue,
+            startAngle: currentAngle,
+            endAngle: currentAngle + angleSize,
+            angleSize: angleSize,
+            color: getSectionColor(index)
+        });
+        console.log(`Section ${index + 1}: ${entry.name}, mindshare: ${entry.mindshare} (${totalImpressions} impressions, normalized: ${normalizedValue.toFixed(2)}), angle: ${currentAngle.toFixed(1)}° - ${(currentAngle + angleSize).toFixed(1)}°`);
+        currentAngle += angleSize;
+    });
+    
+    // Store normalized data for result calculation
+    normalizedLeaderboardData = normalizedData;
+    
+    // Update wheel with proportional sections
+    updateWheelSections(sections);
+}
+
+function createEqualSectionsWheel() {
+    // Fallback: create 13 equal sections
+    const sections = [];
+    const angleSize = 360 / 13;
+    
+    for (let i = 0; i < 13; i++) {
+        sections.push({
+            name: `Section ${i + 1}`,
+            mindshare: 1,
+            startAngle: i * angleSize,
+            endAngle: (i + 1) * angleSize,
+            angleSize: angleSize,
+            color: getSectionColor(i)
+        });
+    }
+    
+    updateWheelSections(sections);
+}
+
+function getSectionColor(index) {
+    const colors = [
+        '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57',
+        '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43',
+        '#ee5a24', '#a55eea', '#26de81'
+    ];
+    return colors[index % colors.length];
+}
+
+function updateWheelSections(sections) {
+    console.log('Updating wheel sections:', sections);
+    
+    if (!spinWheel) {
+        console.log('Spin wheel element not found!');
+        return;
+    }
+    
+    // Create conic gradient based on sections
+    let gradientString = 'conic-gradient(from 0deg, ';
+    
+    sections.forEach((section, index) => {
+        gradientString += `${section.color} ${section.startAngle}deg ${section.endAngle}deg`;
+        if (index < sections.length - 1) {
+            gradientString += ', ';
+        }
+    });
+    
+    gradientString += ')';
+    
+    console.log('Generated gradient string:', gradientString);
+    
+    // Apply the gradient
+    spinWheel.style.background = gradientString;
+    
+    console.log('Applied gradient to wheel');
+    
+    // Update section numbers positioning
+    updateSectionNumbers(sections);
+}
+
+function updateSectionNumbers(sections) {
+    console.log('Updating section numbers for', sections.length, 'sections');
+    
+    // Remove existing section numbers
+    const existingSections = spinWheel.querySelectorAll('.wheel-section');
+    console.log('Removing', existingSections.length, 'existing sections');
+    existingSections.forEach(section => section.remove());
+    
+    // Add new section numbers
+    sections.forEach((section, index) => {
+        const sectionElement = document.createElement('div');
+        sectionElement.className = 'wheel-section';
+        sectionElement.setAttribute('data-section', index + 1);
+        sectionElement.textContent = index + 1;
+        
+        // Calculate position for this section
+        const centerAngle = (section.startAngle + section.endAngle) / 2;
+        const radius = 120; // Distance from center
+        
+        // Position the number
+        const x = Math.cos((centerAngle - 90) * Math.PI / 180) * radius;
+        const y = Math.sin((centerAngle - 90) * Math.PI / 180) * radius;
+        
+        sectionElement.style.position = 'absolute';
+        sectionElement.style.top = '50%';
+        sectionElement.style.left = '50%';
+        sectionElement.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+        
+        spinWheel.appendChild(sectionElement);
+        console.log(`Added section ${index + 1} at position (${x.toFixed(1)}, ${y.toFixed(1)})`);
+    });
+    
+    console.log('Finished updating section numbers');
 }
 
 function handleWheelSpin() {
@@ -1411,8 +1611,8 @@ function handleWheelSpin() {
         
         isWheelSpinning = false;
         
-        // Show result with the final angle
-        showWheelResult(randomAngle);
+        // Show result with the final angle (now that wheel rotates counter-clockwise)
+        showWheelResult(totalRotation);
         
     }, 4000); // Match the CSS animation duration
 }
@@ -1465,67 +1665,234 @@ function createSpinEffects() {
 }
 
 function showWheelResult(finalAngle) {
-    // Calculate which section the wheel landed on
-    // The pointer is at the top (0 degrees), so we need to account for that
-    // Each section is 30 degrees (360/12)
-    const sectionAngle = 360 / 12; // 30 degrees per section
-    
-    // Normalize the angle to 0-360 range
-    const normalizedAngle = ((finalAngle % 360) + 360) % 360;
-    
-    // Calculate which section (1-12) the wheel landed on
-    // Since the pointer is at the top, we need to offset by half a section
-    let sectionNumber = Math.floor((normalizedAngle + sectionAngle/2) / sectionAngle) + 1;
-    
-    // Handle edge case where angle is very close to 0
-    if (sectionNumber > 12) {
-        sectionNumber = 1;
+    if (!normalizedLeaderboardData || normalizedLeaderboardData.length === 0) {
+        console.log('No normalized leaderboard data available');
+        return;
     }
     
-    // Create result message
-    const resultMessage = `🎯 Section ${sectionNumber}!`;
+    // Calculate which section the wheel landed on
+    const normalizedAngle = 360 - (((finalAngle % 360) + 360) % 360);
     
-    // Create a temporary result display
-    const resultDiv = document.createElement('div');
-    resultDiv.style.position = 'fixed';
-    resultDiv.style.top = '50%';
-    resultDiv.style.left = '50%';
-    resultDiv.style.transform = 'translate(-50%, -50%)';
-    resultDiv.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
-    resultDiv.style.color = '#000';
-    resultDiv.style.padding = '20px 40px';
-    resultDiv.style.borderRadius = '20px';
-    resultDiv.style.fontSize = '1.5rem';
-    resultDiv.style.fontWeight = '700';
-    resultDiv.style.fontFamily = "'Orbitron', monospace";
-    resultDiv.style.zIndex = '10000';
-    resultDiv.style.boxShadow = '0 10px 30px rgba(255, 215, 0, 0.5)';
-    resultDiv.style.textAlign = 'center';
-    resultDiv.style.opacity = '0';
-    resultDiv.style.transition = 'all 0.5s ease';
-    resultDiv.textContent = resultMessage;
+    // Calculate total normalized value
+    const totalNormalized = normalizedLeaderboardData.reduce((sum, entry) => sum + entry.normalizedValue, 0);
+    console.log('totalNormalized:', totalNormalized);
     
-    document.body.appendChild(resultDiv);
+    // Find which section the angle falls into
+    let currentAngle = 0;
+    let winningSection = null;
     
-    // Animate in
+    for (let i = 0; i < normalizedLeaderboardData.length; i++) {
+        const entry = normalizedLeaderboardData[i];
+        const normalizedValue = entry.normalizedValue;
+        const sectionSize = (normalizedValue / totalNormalized) * 360;
+        const sectionEnd = currentAngle + sectionSize;
+        
+        console.log(`Checking section ${i + 1}: ${entry.name}, range: ${currentAngle.toFixed(1)}° - ${sectionEnd.toFixed(1)}°`);
+        
+        if (normalizedAngle >= currentAngle && normalizedAngle < sectionEnd) {
+            const totalImpressions = normalizedLeaderboardData.reduce((sum, e) => sum + e.totalImpressions, 0);
+            winningSection = {
+                index: i + 1,
+                name: entry.name,
+                mindshare: entry.mindshare,
+                percentage: ((entry.totalImpressions / totalImpressions) * 100).toFixed(1)
+            };
+            console.log('Found winning section:', winningSection);
+            break;
+        }
+        
+        currentAngle = sectionEnd;
+    }
+    
+    // Handle edge case for the last section
+    if (!winningSection && normalizedAngle >= currentAngle) {
+        const lastEntry = normalizedLeaderboardData[normalizedLeaderboardData.length - 1];
+        const totalImpressions = normalizedLeaderboardData.reduce((sum, e) => sum + e.totalImpressions, 0);
+        winningSection = {
+            index: normalizedLeaderboardData.length,
+            name: lastEntry.name,
+            mindshare: lastEntry.mindshare,
+            percentage: ((lastEntry.totalImpressions / totalImpressions) * 100).toFixed(1)
+        };
+        console.log('Found winning section (edge case):', winningSection);
+    }
+    
+    if (winningSection) {
+        console.log(`Wheel landed on ${winningSection.name} (Section ${winningSection.index}, ${winningSection.percentage}% mindshare, angle: ${normalizedAngle.toFixed(1)}°)`);
+        
+        // Create winning message with cool animation
+        createWinningAnimation(winningSection.name);
+    } else {
+        console.log(`Could not determine winning section for angle: ${normalizedAngle.toFixed(1)}°`);
+    }
+}
+
+function createWinningAnimation(winnerName) {
+    // Create confetti effect first
+    createConfettiEffect();
+    
+    // Create the main winning display
+    const winnerDiv = document.createElement('div');
+    winnerDiv.style.position = 'fixed';
+    winnerDiv.style.top = '50%';
+    winnerDiv.style.left = '50%';
+    winnerDiv.style.transform = 'translate(-50%, -50%) scale(0)';
+    winnerDiv.style.zIndex = '10001';
+    winnerDiv.style.textAlign = 'center';
+    winnerDiv.style.fontFamily = "'Orbitron', monospace";
+    
+    // Create the winning message
+    const messageDiv = document.createElement('div');
+    messageDiv.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+            background-size: 400% 400%;
+            animation: gradientShift 2s ease-in-out infinite;
+            padding: 30px 50px;
+            border-radius: 25px;
+            box-shadow: 
+                0 0 50px rgba(255, 107, 107, 0.6),
+                0 0 100px rgba(78, 205, 196, 0.4),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            position: relative;
+            overflow: hidden;
+        ">
+            <div style="
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+                animation: shimmer 3s ease-in-out infinite;
+            "></div>
+            
+            <div style="
+                position: relative;
+                z-index: 2;
+                color: #fff;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            ">
+                <div style="
+                    font-size: 2.5rem;
+                    font-weight: 900;
+                    margin-bottom: 10px;
+                    animation: bounce 1s ease-in-out infinite alternate;
+                ">🎉 WINNER! 🎉</div>
+                
+                <div style="
+                    font-size: 2rem;
+                    font-weight: 700;
+                    margin-bottom: 15px;
+                    animation: pulse 1.5s ease-in-out infinite;
+                ">${winnerName}</div>
+                
+                <div style="
+                    font-size: 1.2rem;
+                    font-weight: 500;
+                    opacity: 0.9;
+                    animation: fadeInOut 2s ease-in-out infinite;
+                ">Congratulations! 🏆</div>
+            </div>
+        </div>
+    `;
+    
+    winnerDiv.appendChild(messageDiv);
+    document.body.appendChild(winnerDiv);
+    
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes shimmer {
+            0% { transform: rotate(0deg) translate(-50%, -50%); }
+            100% { transform: rotate(360deg) translate(-50%, -50%); }
+        }
+        
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.9; }
+            50% { opacity: 0.6; }
+        }
+        
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Animate the winner display
     setTimeout(() => {
-        resultDiv.style.opacity = '1';
-        resultDiv.style.transform = 'translate(-50%, -50%) scale(1.1)';
+        winnerDiv.style.transition = 'all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        winnerDiv.style.transform = 'translate(-50%, -50%) scale(1)';
     }, 100);
     
-    // Animate out and remove
+    // Remove after 5 seconds
     setTimeout(() => {
-        resultDiv.style.opacity = '0';
-        resultDiv.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        winnerDiv.style.transition = 'all 0.5s ease-in-out';
+        winnerDiv.style.transform = 'translate(-50%, -50%) scale(0)';
+        winnerDiv.style.opacity = '0';
+        
         setTimeout(() => {
-            if (document.body.contains(resultDiv)) {
-                document.body.removeChild(resultDiv);
+            if (document.body.contains(winnerDiv)) {
+                document.body.removeChild(winnerDiv);
+            }
+            if (document.head.contains(style)) {
+                document.head.removeChild(style);
             }
         }, 500);
-    }, 3000);
+    }, 5000);
+}
+
+function createConfettiEffect() {
+    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff', '#5f27cd', '#00d2d3', '#ff9f43', '#ee5a24', '#a55eea', '#26de81'];
     
-    // Log the result for debugging
-    console.log(`Wheel landed on section ${sectionNumber} (angle: ${normalizedAngle.toFixed(1)}°)`);
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.style.position = 'fixed';
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.top = '-10px';
+            confetti.style.width = '10px';
+            confetti.style.height = '10px';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.borderRadius = '50%';
+            confetti.style.zIndex = '10000';
+            confetti.style.animation = `confettiFall ${2 + Math.random() * 3}s linear forwards`;
+            
+            document.body.appendChild(confetti);
+            
+            // Remove confetti after animation
+            setTimeout(() => {
+                if (document.body.contains(confetti)) {
+                    document.body.removeChild(confetti);
+                }
+            }, 5000);
+        }, i * 50);
+    }
 }
 
 // Initialize spin wheel when DOM is loaded

@@ -1904,21 +1904,6 @@ body {
     width: 300px;
     height: 300px;
     border-radius: 50%;
-    background: conic-gradient(
-        from 0deg,
-        #ffd700 0deg 30deg,
-        #ffed4e 30deg 60deg,
-        #fff200 60deg 90deg,
-        #ffb347 90deg 120deg,
-        #ff6b6b 120deg 150deg,
-        #ff8e8e 150deg 180deg,
-        #6c5ce7 180deg 210deg,
-        #a29bfe 210deg 240deg,
-        #00b894 240deg 270deg,
-        #00a085 270deg 300deg,
-        #ffd700 300deg 330deg,
-        #ffed4e 330deg 360deg
-    );
     border: 8px solid #ffd700;
     box-shadow: 
         0 0 30px rgba(255, 215, 0, 0.5),
@@ -1972,19 +1957,7 @@ body {
     height: 30px;
 }
 
-/* Position each section around the wheel */
-.wheel-section:nth-child(2) { transform: translate(-50%, -50%) rotate(15deg) translateY(-120px) rotate(-15deg); }
-.wheel-section:nth-child(3) { transform: translate(-50%, -50%) rotate(45deg) translateY(-120px) rotate(-45deg); }
-.wheel-section:nth-child(4) { transform: translate(-50%, -50%) rotate(75deg) translateY(-120px) rotate(-75deg); }
-.wheel-section:nth-child(5) { transform: translate(-50%, -50%) rotate(105deg) translateY(-120px) rotate(-105deg); }
-.wheel-section:nth-child(6) { transform: translate(-50%, -50%) rotate(135deg) translateY(-120px) rotate(-135deg); }
-.wheel-section:nth-child(7) { transform: translate(-50%, -50%) rotate(165deg) translateY(-120px) rotate(-165deg); }
-.wheel-section:nth-child(8) { transform: translate(-50%, -50%) rotate(195deg) translateY(-120px) rotate(-195deg); }
-.wheel-section:nth-child(9) { transform: translate(-50%, -50%) rotate(225deg) translateY(-120px) rotate(-225deg); }
-.wheel-section:nth-child(10) { transform: translate(-50%, -50%) rotate(255deg) translateY(-120px) rotate(-255deg); }
-.wheel-section:nth-child(11) { transform: translate(-50%, -50%) rotate(285deg) translateY(-120px) rotate(-285deg); }
-.wheel-section:nth-child(12) { transform: translate(-50%, -50%) rotate(315deg) translateY(-120px) rotate(-315deg); }
-.wheel-section:nth-child(13) { transform: translate(-50%, -50%) rotate(345deg) translateY(-120px) rotate(-345deg); }
+/* Wheel sections are now positioned dynamically via JavaScript */
 
 .wheel-pointer {
     width: 0;
@@ -1995,7 +1968,7 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) translateY(-180px);
+    transform: translate(-50%, -50%) translateY(-160px);
     filter: drop-shadow(0 0 10px rgba(255, 71, 87, 0.8));
     z-index: 20;
     pointer-events: none;
@@ -2113,25 +2086,13 @@ body {
         height: 25px;
     }
     
-    /* Adjust section positions for smaller wheel */
-    .wheel-section:nth-child(2) { transform: translate(-50%, -50%) rotate(15deg) translateY(-100px) rotate(-15deg); }
-    .wheel-section:nth-child(3) { transform: translate(-50%, -50%) rotate(45deg) translateY(-100px) rotate(-45deg); }
-    .wheel-section:nth-child(4) { transform: translate(-50%, -50%) rotate(75deg) translateY(-100px) rotate(-75deg); }
-    .wheel-section:nth-child(5) { transform: translate(-50%, -50%) rotate(105deg) translateY(-100px) rotate(-105deg); }
-    .wheel-section:nth-child(6) { transform: translate(-50%, -50%) rotate(135deg) translateY(-100px) rotate(-135deg); }
-    .wheel-section:nth-child(7) { transform: translate(-50%, -50%) rotate(165deg) translateY(-100px) rotate(-165deg); }
-    .wheel-section:nth-child(8) { transform: translate(-50%, -50%) rotate(195deg) translateY(-100px) rotate(-195deg); }
-    .wheel-section:nth-child(9) { transform: translate(-50%, -50%) rotate(225deg) translateY(-100px) rotate(-225deg); }
-    .wheel-section:nth-child(10) { transform: translate(-50%, -50%) rotate(255deg) translateY(-100px) rotate(-255deg); }
-    .wheel-section:nth-child(11) { transform: translate(-50%, -50%) rotate(285deg) translateY(-100px) rotate(-285deg); }
-    .wheel-section:nth-child(12) { transform: translate(-50%, -50%) rotate(315deg) translateY(-100px) rotate(-315deg); }
-    .wheel-section:nth-child(13) { transform: translate(-50%, -50%) rotate(345deg) translateY(-100px) rotate(-345deg); }
+    /* Section positions are now calculated dynamically via JavaScript */
     
     .wheel-pointer {
         border-left-width: 12px;
         border-right-width: 12px;
         border-top-width: 24px;
-        transform: translate(-50%, -50%) translateY(-150px);
+        transform: translate(-50%, -50%) translateY(-130px);
     }
     
     .wheel-base {
@@ -2164,25 +2125,13 @@ body {
         height: 20px;
     }
     
-    /* Adjust section positions for mobile wheel */
-    .wheel-section:nth-child(2) { transform: translate(-50%, -50%) rotate(15deg) translateY(-80px) rotate(-15deg); }
-    .wheel-section:nth-child(3) { transform: translate(-50%, -50%) rotate(45deg) translateY(-80px) rotate(-45deg); }
-    .wheel-section:nth-child(4) { transform: translate(-50%, -50%) rotate(75deg) translateY(-80px) rotate(-75deg); }
-    .wheel-section:nth-child(5) { transform: translate(-50%, -50%) rotate(105deg) translateY(-80px) rotate(-105deg); }
-    .wheel-section:nth-child(6) { transform: translate(-50%, -50%) rotate(135deg) translateY(-80px) rotate(-135deg); }
-    .wheel-section:nth-child(7) { transform: translate(-50%, -50%) rotate(165deg) translateY(-80px) rotate(-165deg); }
-    .wheel-section:nth-child(8) { transform: translate(-50%, -50%) rotate(195deg) translateY(-80px) rotate(-195deg); }
-    .wheel-section:nth-child(9) { transform: translate(-50%, -50%) rotate(225deg) translateY(-80px) rotate(-225deg); }
-    .wheel-section:nth-child(10) { transform: translate(-50%, -50%) rotate(255deg) translateY(-80px) rotate(-255deg); }
-    .wheel-section:nth-child(11) { transform: translate(-50%, -50%) rotate(285deg) translateY(-80px) rotate(-285deg); }
-    .wheel-section:nth-child(12) { transform: translate(-50%, -50%) rotate(315deg) translateY(-80px) rotate(-315deg); }
-    .wheel-section:nth-child(13) { transform: translate(-50%, -50%) rotate(345deg) translateY(-80px) rotate(-345deg); }
+    /* Section positions are now calculated dynamically via JavaScript */
     
     .wheel-pointer {
         border-left-width: 10px;
         border-right-width: 10px;
         border-top-width: 20px;
-        transform: translate(-50%, -50%) translateY(-120px);
+        transform: translate(-50%, -50%) translateY(-100px);
     }
     
     .wheel-base {
