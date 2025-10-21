@@ -2321,4 +2321,203 @@ body {
     }
 }
 
+/* Wheel Loading Indicator Styles */
+.wheel-loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+}
+
+.wheel-loading-spinner {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+.wheel-spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 2px solid transparent;
+    border-top: 2px solid #ffd700;
+    border-radius: 50%;
+    animation: wheel-spin 1s linear infinite;
+}
+
+.wheel-spinner-ring:nth-child(2) {
+    width: 30px;
+    height: 30px;
+    top: 5px;
+    left: 5px;
+    border-top-color: #ffed4e;
+    animation-delay: -0.3s;
+}
+
+.wheel-spinner-ring:nth-child(3) {
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    left: 10px;
+    border-top-color: #ffd700;
+    animation-delay: -0.6s;
+}
+
+@keyframes wheel-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.wheel-loading-text {
+    color: #ffd700;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+/* Mobile responsiveness for wheel loading */
+@media (max-width: 768px) {
+    .wheel-loading-spinner {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 8px;
+    }
+    
+    .wheel-spinner-ring:nth-child(2) {
+        width: 22px;
+        height: 22px;
+        top: 4px;
+        left: 4px;
+    }
+    
+    .wheel-spinner-ring:nth-child(3) {
+        width: 14px;
+        height: 14px;
+        top: 8px;
+        left: 8px;
+    }
+    
+    .wheel-loading-text {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wheel-loading-spinner {
+        width: 25px;
+        height: 25px;
+        margin-bottom: 6px;
+    }
+    
+    .wheel-spinner-ring:nth-child(2) {
+        width: 18px;
+        height: 18px;
+        top: 3.5px;
+        left: 3.5px;
+    }
+    
+    .wheel-spinner-ring:nth-child(3) {
+        width: 11px;
+        height: 11px;
+        top: 7px;
+        left: 7px;
+    }
+    
+    .wheel-loading-text {
+        font-size: 0.7rem;
+    }
+}
+
+/* Wheel Retry Button Styles */
+.wheel-retry-btn {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    border: 2px solid #ffd700;
+    border-radius: 25px;
+    padding: 8px 16px;
+    color: #000;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    z-index: 5;
+}
+
+.wheel-retry-btn:hover {
+    background: linear-gradient(135deg, #ffed4e, #ffd700);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.wheel-retry-btn:active {
+    transform: translateX(-50%) translateY(0);
+    box-shadow: 0 2px 10px rgba(255, 215, 0, 0.4);
+}
+
+.retry-icon {
+    font-size: 0.9rem;
+    animation: retry-pulse 2s ease-in-out infinite;
+}
+
+.retry-text {
+    font-size: 0.8rem;
+}
+
+@keyframes retry-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+/* Mobile responsiveness for retry button */
+@media (max-width: 768px) {
+    .wheel-retry-btn {
+        bottom: -45px;
+        padding: 6px 12px;
+        font-size: 0.7rem;
+    }
+    
+    .retry-icon {
+        font-size: 0.8rem;
+    }
+    
+    .retry-text {
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .wheel-retry-btn {
+        bottom: -40px;
+        padding: 5px 10px;
+        font-size: 0.6rem;
+    }
+    
+    .retry-icon {
+        font-size: 0.7rem;
+    }
+    
+    .retry-text {
+        font-size: 0.6rem;
+    }
+}
+
  

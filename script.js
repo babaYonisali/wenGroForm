@@ -1461,9 +1461,20 @@ function initializeSpinWheel() {
     }, 2000);
 }
 
+// Wheel loading retry configuration
+let wheelRetryCount = 0;
+const maxWheelRetries = 3;
+const wheelRetryDelays = [1000, 3000, 5000]; // Exponential backoff delays
+
 async function loadLeaderboardForWheel() {
     try {
-        console.log('Attempting to load leaderboard data for wheel...');
+        console.log(`Attempting to load leaderboard data for wheel... (attempt ${wheelRetryCount + 1}/${maxWheelRetries + 1})`);
+        
+        // Show loading indicator if this is a retry
+        if (wheelRetryCount > 0) {
+            showWheelLoadingIndicator();
+        }
+        
         const response = await fetch('/api/coti-leaderboard', {
             credentials: 'include'
         });
@@ -1477,6 +1488,10 @@ async function loadLeaderboardForWheel() {
                 leaderboardData = result.data;
                 console.log('Creating proportional wheel with', result.data.length, 'entries');
                 createProportionalWheel(result.data);
+                
+                // Reset retry count on success
+                wheelRetryCount = 0;
+                hideWheelLoadingIndicator();
                 return;
             } else {
                 console.log('API returned success=false or no data, using fallback');
@@ -1488,9 +1503,54 @@ async function loadLeaderboardForWheel() {
         console.error('Error loading leaderboard for wheel:', error);
     }
     
-    // Fallback to equal sections if leaderboard fails
-    console.log('Using fallback: creating equal sections wheel');
+    // Check if we should retry
+    if (wheelRetryCount < maxWheelRetries) {
+        wheelRetryCount++;
+        const delay = wheelRetryDelays[wheelRetryCount - 1];
+        console.log(`Wheel loading failed, retrying in ${delay}ms... (attempt ${wheelRetryCount + 1}/${maxWheelRetries + 1})`);
+        
+        setTimeout(() => {
+            loadLeaderboardForWheel();
+        }, delay);
+        return;
+    }
+    
+    // Max retries reached, use fallback
+    console.log('Max retries reached, using fallback: creating equal sections wheel');
+    wheelRetryCount = 0; // Reset for future attempts
+    hideWheelLoadingIndicator();
     createEqualSectionsWheel();
+}
+
+function showWheelLoadingIndicator() {
+    if (!spinWheel) return;
+    
+    // Create loading overlay if it doesn't exist
+    let loadingOverlay = spinWheel.querySelector('.wheel-loading-overlay');
+    if (!loadingOverlay) {
+        loadingOverlay = document.createElement('div');
+        loadingOverlay.className = 'wheel-loading-overlay';
+        loadingOverlay.innerHTML = `
+            <div class="wheel-loading-spinner">
+                <div class="wheel-spinner-ring"></div>
+                <div class="wheel-spinner-ring"></div>
+                <div class="wheel-spinner-ring"></div>
+            </div>
+            <div class="wheel-loading-text">Retrying...</div>
+        `;
+        spinWheel.appendChild(loadingOverlay);
+    }
+    
+    loadingOverlay.style.display = 'flex';
+}
+
+function hideWheelLoadingIndicator() {
+    if (!spinWheel) return;
+    
+    const loadingOverlay = spinWheel.querySelector('.wheel-loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+    }
 }
 
 function createProportionalWheel(data) {
@@ -1571,6 +1631,35 @@ function createEqualSectionsWheel() {
     
     console.log('Created', sections.length, 'equal sections for fallback wheel');
     updateWheelSections(sections);
+    
+    // Add retry button for failed API calls
+    addWheelRetryButton();
+}
+
+function addWheelRetryButton() {
+    if (!spinWheel) return;
+    
+    // Remove existing retry button if it exists
+    const existingRetryBtn = spinWheel.querySelector('.wheel-retry-btn');
+    if (existingRetryBtn) {
+        existingRetryBtn.remove();
+    }
+    
+    // Create retry button
+    const retryBtn = document.createElement('button');
+    retryBtn.className = 'wheel-retry-btn';
+    retryBtn.innerHTML = `
+        <span class="retry-icon">🔄</span>
+        <span class="retry-text">Retry Loading</span>
+    `;
+    
+    retryBtn.addEventListener('click', () => {
+        console.log('Manual retry requested for wheel loading');
+        wheelRetryCount = 0; // Reset retry count
+        loadLeaderboardForWheel();
+    });
+    
+    spinWheel.appendChild(retryBtn);
 }
 
 function getSectionColor(index) {
