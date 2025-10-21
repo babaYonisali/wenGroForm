@@ -36,11 +36,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    // Check if user is already authenticated
-    checkAuthStatus();
-    
-    // Check for OAuth success parameters
+    // Check for OAuth success parameters first (before auth status)
     checkOAuthSuccess();
+    
+    // Only check auth status if we're not in the middle of OAuth flow
+    const urlParams = new URLSearchParams(window.location.search);
+    const loginSuccess = urlParams.get('login');
+    const xHandle = urlParams.get('xHandle');
+    
+    // If we're not in OAuth flow, check auth status
+    if (!loginSuccess && !xHandle) {
+        checkAuthStatus();
+    }
     
     // Add event listeners with null checks
     if (xLoginBtn) xLoginBtn.addEventListener('click', handleXLogin);
@@ -122,6 +129,7 @@ function checkOAuthSuccess() {
     const urlParams = new URLSearchParams(window.location.search);
     const loginSuccess = urlParams.get('login');
     const xHandle = urlParams.get('xHandle');
+    const error = urlParams.get('error');
     
     if (loginSuccess === 'success' && xHandle) {
         // OAuth was successful, check if they've already submitted their data
@@ -130,6 +138,22 @@ function checkOAuthSuccess() {
         // Clean up the URL
         const newUrl = window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
+    } else if (loginSuccess === 'error') {
+        // OAuth failed, show appropriate error message
+        if (error === 'rate_limit') {
+            showNotification('Twitter API rate limit exceeded. Please try again in a few hours.', 'error');
+        } else {
+            showNotification('Authorization failed. Please try again.', 'error');
+        }
+        showXLoginSection();
+        
+        // Clean up the URL
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    } else if (loginSuccess || xHandle) {
+        // We have OAuth parameters but they're not complete yet
+        // Keep showing loading screen while OAuth processes
+        showAuthorizationLoading();
     }
 }
 
