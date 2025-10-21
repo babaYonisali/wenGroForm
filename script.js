@@ -36,18 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeApp() {
-    // Check for OAuth success parameters first (before auth status)
+    // Check if user is already authenticated
+    checkAuthStatus();
+    
+    // Check for OAuth success parameters
     checkOAuthSuccess();
-    
-    // Only check auth status if we're not in the middle of OAuth flow
-    const urlParams = new URLSearchParams(window.location.search);
-    const loginSuccess = urlParams.get('login');
-    const xHandle = urlParams.get('xHandle');
-    
-    // If we're not in OAuth flow, check auth status
-    if (!loginSuccess && !xHandle) {
-        checkAuthStatus();
-    }
     
     // Add event listeners with null checks
     if (xLoginBtn) xLoginBtn.addEventListener('click', handleXLogin);
@@ -129,7 +122,6 @@ function checkOAuthSuccess() {
     const urlParams = new URLSearchParams(window.location.search);
     const loginSuccess = urlParams.get('login');
     const xHandle = urlParams.get('xHandle');
-    const error = urlParams.get('error');
     
     if (loginSuccess === 'success' && xHandle) {
         // OAuth was successful, check if they've already submitted their data
@@ -138,22 +130,6 @@ function checkOAuthSuccess() {
         // Clean up the URL
         const newUrl = window.location.pathname;
         window.history.replaceState({}, document.title, newUrl);
-    } else if (loginSuccess === 'error') {
-        // OAuth failed, show appropriate error message
-        if (error === 'rate_limit') {
-            showNotification('Twitter API rate limit exceeded. Please try again in a few hours.', 'error');
-        } else {
-            showNotification('Authorization failed. Please try again.', 'error');
-        }
-        showXLoginSection();
-        
-        // Clean up the URL
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, newUrl);
-    } else if (loginSuccess || xHandle) {
-        // We have OAuth parameters but they're not complete yet
-        // Keep showing loading screen while OAuth processes
-        showAuthorizationLoading();
     }
 }
 
@@ -1461,20 +1437,12 @@ function initializeSpinWheel() {
     }, 2000);
 }
 
-// Wheel loading retry configuration
-let wheelRetryCount = 0;
-const maxWheelRetries = 3;
-const wheelRetryDelays = [1000, 3000, 5000]; // Exponential backoff delays
-
-async function loadLeaderboardForWheel() {
+async function loadLeaderboardForWheel(retryCount = 0, maxRetries = 3) {
+    const baseDelay = 1000; // 1 second base delay
+    const maxDelay = 10000; // 10 seconds max delay
+    
     try {
-        console.log(`Attempting to load leaderboard data for wheel... (attempt ${wheelRetryCount + 1}/${maxWheelRetries + 1})`);
-        
-        // Show loading indicator if this is a retry
-        if (wheelRetryCount > 0) {
-            showWheelLoadingIndicator();
-        }
-        
+        console.log(`Attempting to load leaderboard data for wheel... (attempt ${retryCount + 1}/${maxRetries + 1})`);
         const response = await fetch('/api/coti-leaderboard', {
             credentials: 'include'
         });
@@ -1488,10 +1456,6 @@ async function loadLeaderboardForWheel() {
                 leaderboardData = result.data;
                 console.log('Creating proportional wheel with', result.data.length, 'entries');
                 createProportionalWheel(result.data);
-                
-                // Reset retry count on success
-                wheelRetryCount = 0;
-                hideWheelLoadingIndicator();
                 return;
             } else {
                 console.log('API returned success=false or no data, using fallback');
@@ -1500,57 +1464,23 @@ async function loadLeaderboardForWheel() {
             console.log('API request failed with status:', response.status);
         }
     } catch (error) {
-        console.error('Error loading leaderboard for wheel:', error);
+        console.error(`Error loading leaderboard for wheel (attempt ${retryCount + 1}):`, error);
     }
     
-    // Check if we should retry
-    if (wheelRetryCount < maxWheelRetries) {
-        wheelRetryCount++;
-        const delay = wheelRetryDelays[wheelRetryCount - 1];
-        console.log(`Wheel loading failed, retrying in ${delay}ms... (attempt ${wheelRetryCount + 1}/${maxWheelRetries + 1})`);
+    // If we haven't exceeded max retries, retry with exponential backoff
+    if (retryCount < maxRetries) {
+        const delay = Math.min(baseDelay * Math.pow(2, retryCount), maxDelay);
+        console.log(`Retrying in ${delay}ms... (attempt ${retryCount + 2}/${maxRetries + 1})`);
         
         setTimeout(() => {
-            loadLeaderboardForWheel();
+            loadLeaderboardForWheel(retryCount + 1, maxRetries);
         }, delay);
         return;
     }
     
-    // Max retries reached, use fallback
-    console.log('Max retries reached, using fallback: creating equal sections wheel');
-    wheelRetryCount = 0; // Reset for future attempts
-    hideWheelLoadingIndicator();
+    // Fallback to equal sections if all retries failed
+    console.log('All retry attempts failed, using fallback: creating equal sections wheel');
     createEqualSectionsWheel();
-}
-
-function showWheelLoadingIndicator() {
-    if (!spinWheel) return;
-    
-    // Create loading overlay if it doesn't exist
-    let loadingOverlay = spinWheel.querySelector('.wheel-loading-overlay');
-    if (!loadingOverlay) {
-        loadingOverlay = document.createElement('div');
-        loadingOverlay.className = 'wheel-loading-overlay';
-        loadingOverlay.innerHTML = `
-            <div class="wheel-loading-spinner">
-                <div class="wheel-spinner-ring"></div>
-                <div class="wheel-spinner-ring"></div>
-                <div class="wheel-spinner-ring"></div>
-            </div>
-            <div class="wheel-loading-text">Retrying...</div>
-        `;
-        spinWheel.appendChild(loadingOverlay);
-    }
-    
-    loadingOverlay.style.display = 'flex';
-}
-
-function hideWheelLoadingIndicator() {
-    if (!spinWheel) return;
-    
-    const loadingOverlay = spinWheel.querySelector('.wheel-loading-overlay');
-    if (loadingOverlay) {
-        loadingOverlay.style.display = 'none';
-    }
 }
 
 function createProportionalWheel(data) {
@@ -1631,35 +1561,6 @@ function createEqualSectionsWheel() {
     
     console.log('Created', sections.length, 'equal sections for fallback wheel');
     updateWheelSections(sections);
-    
-    // Add retry button for failed API calls
-    addWheelRetryButton();
-}
-
-function addWheelRetryButton() {
-    if (!spinWheel) return;
-    
-    // Remove existing retry button if it exists
-    const existingRetryBtn = spinWheel.querySelector('.wheel-retry-btn');
-    if (existingRetryBtn) {
-        existingRetryBtn.remove();
-    }
-    
-    // Create retry button
-    const retryBtn = document.createElement('button');
-    retryBtn.className = 'wheel-retry-btn';
-    retryBtn.innerHTML = `
-        <span class="retry-icon">🔄</span>
-        <span class="retry-text">Retry Loading</span>
-    `;
-    
-    retryBtn.addEventListener('click', () => {
-        console.log('Manual retry requested for wheel loading');
-        wheelRetryCount = 0; // Reset retry count
-        loadLeaderboardForWheel();
-    });
-    
-    spinWheel.appendChild(retryBtn);
 }
 
 function getSectionColor(index) {
