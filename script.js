@@ -61,6 +61,18 @@ function initializeApp() {
 
 async function checkAuthStatus() {
     try {
+        // Check if we're in the middle of OAuth flow
+        const urlParams = new URLSearchParams(window.location.search);
+        const loginSuccess = urlParams.get('login');
+        const xHandle = urlParams.get('xHandle');
+        
+        // If we have OAuth success parameters, we're coming back from Twitter
+        if (loginSuccess === 'success' && xHandle) {
+            console.log('OAuth success detected, processing...');
+            // Don't redirect to login, let the OAuth success handler deal with it
+            return;
+        }
+        
         // Use the new /api/me endpoint
         const response = await fetch('/api/me', {
             credentials: 'include'
@@ -134,6 +146,9 @@ function checkOAuthSuccess() {
 }
 
 function handleXLogin() {
+    // Show loading state
+    showAuthorizationLoading();
+    
     // Redirect to the new OAuth start endpoint
     window.location.href = '/auth/x/start';
 }
@@ -143,6 +158,26 @@ function showXLoginSection() {
     userDataForm.classList.add('hidden');
     homeSection.classList.add('hidden');
     forumSection.classList.add('hidden');
+    
+    // Hide loading section if it's visible
+    const loadingSection = document.getElementById('authorizationLoading');
+    if (loadingSection) {
+        loadingSection.classList.add('hidden');
+    }
+}
+
+function showAuthorizationLoading() {
+    // Hide all sections
+    xLoginSection.classList.add('hidden');
+    userDataForm.classList.add('hidden');
+    homeSection.classList.add('hidden');
+    forumSection.classList.add('hidden');
+    
+    // Show loading section
+    const loadingSection = document.getElementById('authorizationLoading');
+    if (loadingSection) {
+        loadingSection.classList.remove('hidden');
+    }
 }
 
 function showUserDataForm() {
@@ -156,6 +191,12 @@ function showUserDataForm() {
         userDataForm.classList.remove('hidden');
         homeSection.classList.add('hidden');
         forumSection.classList.add('hidden');
+        
+        // Hide loading section if it's visible
+        const loadingSection = document.getElementById('authorizationLoading');
+        if (loadingSection) {
+            loadingSection.classList.add('hidden');
+        }
     }
 }
 
