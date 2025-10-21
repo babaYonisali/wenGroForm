@@ -1353,13 +1353,17 @@ const spinWheelBtn = document.getElementById('spinWheelBtn');
 
 // Initialize spin wheel functionality
 function initializeSpinWheel() {
-    if (spinWheelBtn) {
-        spinWheelBtn.addEventListener('click', handleWheelSpin);
-    }
-    
+    // Reset wheel to 0 degrees on initialization
     if (spinWheel) {
+        spinWheel.style.transform = 'rotate(0deg)';
+        wheelRotation = 0;
+        
         // Add click to wheel for spinning
         spinWheel.addEventListener('click', handleWheelSpin);
+    }
+    
+    if (spinWheelBtn) {
+        spinWheelBtn.addEventListener('click', handleWheelSpin);
     }
 }
 
@@ -1393,9 +1397,9 @@ function handleWheelSpin() {
     setTimeout(() => {
         if (spinWheel) {
             spinWheel.classList.remove('spinning');
-            // Update the actual rotation for future spins
-            wheelRotation = (wheelRotation + totalRotation) % 360;
-            spinWheel.style.transform = `rotate(${wheelRotation}deg)`;
+            // Always reset wheel to 0 degrees after spin
+            wheelRotation = 0;
+            spinWheel.style.transform = 'rotate(0deg)';
         }
         
         // Re-enable button
@@ -1407,7 +1411,7 @@ function handleWheelSpin() {
         
         isWheelSpinning = false;
         
-        // Show result (for now just a simple notification)
+        // Show result with the final angle
         showWheelResult(randomAngle);
         
     }, 4000); // Match the CSS animation duration
