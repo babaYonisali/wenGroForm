@@ -1341,4 +1341,185 @@ function handleImageError(img) {
             fallbackAvatar.style.display = 'flex';
         }
     }
-} 
+}
+
+// Spin Wheel functionality
+let isWheelSpinning = false;
+let wheelRotation = 0;
+
+// DOM elements for spin wheel
+const spinWheel = document.getElementById('spinWheel');
+const spinWheelBtn = document.getElementById('spinWheelBtn');
+
+// Initialize spin wheel functionality
+function initializeSpinWheel() {
+    if (spinWheelBtn) {
+        spinWheelBtn.addEventListener('click', handleWheelSpin);
+    }
+    
+    if (spinWheel) {
+        // Add click to wheel for spinning
+        spinWheel.addEventListener('click', handleWheelSpin);
+    }
+}
+
+function handleWheelSpin() {
+    if (isWheelSpinning) return;
+    
+    isWheelSpinning = true;
+    
+    // Disable button during spin
+    if (spinWheelBtn) {
+        spinWheelBtn.disabled = true;
+        const btnText = spinWheelBtn.querySelector('.btn-text');
+        if (btnText) btnText.textContent = 'SPINNING...';
+    }
+    
+    // Calculate random rotation (multiple full rotations + random angle)
+    const baseRotations = 4 + Math.random() * 4; // 4-8 full rotations
+    const randomAngle = Math.random() * 360; // Random final angle
+    const totalRotation = (baseRotations * 360) + randomAngle;
+    
+    // Update CSS custom property for animation
+    if (spinWheel) {
+        spinWheel.style.setProperty('--spin-rotation', `${totalRotation}deg`);
+        spinWheel.classList.add('spinning');
+        
+        // Add some visual effects
+        createSpinEffects();
+    }
+    
+    // Reset after animation completes
+    setTimeout(() => {
+        if (spinWheel) {
+            spinWheel.classList.remove('spinning');
+            // Update the actual rotation for future spins
+            wheelRotation = (wheelRotation + totalRotation) % 360;
+            spinWheel.style.transform = `rotate(${wheelRotation}deg)`;
+        }
+        
+        // Re-enable button
+        if (spinWheelBtn) {
+            spinWheelBtn.disabled = false;
+            const btnText = spinWheelBtn.querySelector('.btn-text');
+            if (btnText) btnText.textContent = 'SPIN';
+        }
+        
+        isWheelSpinning = false;
+        
+        // Show result (for now just a simple notification)
+        showWheelResult(randomAngle);
+        
+    }, 4000); // Match the CSS animation duration
+}
+
+function createSpinEffects() {
+    // Create particle effects around the wheel
+    if (!spinWheel) return;
+    
+    const rect = spinWheel.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.left = centerX + 'px';
+            particle.style.top = centerY + 'px';
+            particle.style.width = '4px';
+            particle.style.height = '4px';
+            particle.style.background = `hsl(${Math.random() * 360}, 100%, 70%)`;
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.zIndex = '1000';
+            particle.style.transition = 'all 2s ease-out';
+            
+            document.body.appendChild(particle);
+            
+            // Animate particle outward
+            setTimeout(() => {
+                const angle = (Math.PI * 2 * i) / 20;
+                const distance = 150 + Math.random() * 100;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.opacity = '0';
+                particle.style.transform = 'scale(0)';
+            }, 10);
+            
+            // Remove particle
+            setTimeout(() => {
+                if (document.body.contains(particle)) {
+                    document.body.removeChild(particle);
+                }
+            }, 2000);
+        }, i * 100);
+    }
+}
+
+function showWheelResult(finalAngle) {
+    // Calculate which section the wheel landed on (for future use)
+    const sectionAngle = 360 / 12; // 12 sections
+    const sectionIndex = Math.floor(finalAngle / sectionAngle);
+    
+    // For now, just show a simple result message
+    const messages = [
+        "🎯 Nice spin!",
+        "🚀 Lucky you!",
+        "💎 Great result!",
+        "⚡ Amazing!",
+        "🔥 Fantastic!",
+        "🌙 Excellent!",
+        "⭐ Wonderful!",
+        "🎊 Awesome!"
+    ];
+    
+    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    
+    // Create a temporary result display
+    const resultDiv = document.createElement('div');
+    resultDiv.style.position = 'fixed';
+    resultDiv.style.top = '50%';
+    resultDiv.style.left = '50%';
+    resultDiv.style.transform = 'translate(-50%, -50%)';
+    resultDiv.style.background = 'linear-gradient(45deg, #ffd700, #ffed4e)';
+    resultDiv.style.color = '#000';
+    resultDiv.style.padding = '20px 40px';
+    resultDiv.style.borderRadius = '20px';
+    resultDiv.style.fontSize = '1.5rem';
+    resultDiv.style.fontWeight = '700';
+    resultDiv.style.fontFamily = "'Orbitron', monospace";
+    resultDiv.style.zIndex = '10000';
+    resultDiv.style.boxShadow = '0 10px 30px rgba(255, 215, 0, 0.5)';
+    resultDiv.style.textAlign = 'center';
+    resultDiv.style.opacity = '0';
+    resultDiv.style.transition = 'all 0.5s ease';
+    resultDiv.textContent = randomMessage;
+    
+    document.body.appendChild(resultDiv);
+    
+    // Animate in
+    setTimeout(() => {
+        resultDiv.style.opacity = '1';
+        resultDiv.style.transform = 'translate(-50%, -50%) scale(1.1)';
+    }, 100);
+    
+    // Animate out and remove
+    setTimeout(() => {
+        resultDiv.style.opacity = '0';
+        resultDiv.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        setTimeout(() => {
+            if (document.body.contains(resultDiv)) {
+                document.body.removeChild(resultDiv);
+            }
+        }, 500);
+    }, 2000);
+}
+
+// Initialize spin wheel when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    initializeSpinWheel();
+}); 
