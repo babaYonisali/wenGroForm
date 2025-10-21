@@ -1461,23 +1461,25 @@ function createSpinEffects() {
 }
 
 function showWheelResult(finalAngle) {
-    // Calculate which section the wheel landed on (for future use)
-    const sectionAngle = 360 / 12; // 12 sections
-    const sectionIndex = Math.floor(finalAngle / sectionAngle);
+    // Calculate which section the wheel landed on
+    // The pointer is at the top (0 degrees), so we need to account for that
+    // Each section is 30 degrees (360/12)
+    const sectionAngle = 360 / 12; // 30 degrees per section
     
-    // For now, just show a simple result message
-    const messages = [
-        "🎯 Nice spin!",
-        "🚀 Lucky you!",
-        "💎 Great result!",
-        "⚡ Amazing!",
-        "🔥 Fantastic!",
-        "🌙 Excellent!",
-        "⭐ Wonderful!",
-        "🎊 Awesome!"
-    ];
+    // Normalize the angle to 0-360 range
+    const normalizedAngle = ((finalAngle % 360) + 360) % 360;
     
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+    // Calculate which section (1-12) the wheel landed on
+    // Since the pointer is at the top, we need to offset by half a section
+    let sectionNumber = Math.floor((normalizedAngle + sectionAngle/2) / sectionAngle) + 1;
+    
+    // Handle edge case where angle is very close to 0
+    if (sectionNumber > 12) {
+        sectionNumber = 1;
+    }
+    
+    // Create result message
+    const resultMessage = `🎯 Section ${sectionNumber}!`;
     
     // Create a temporary result display
     const resultDiv = document.createElement('div');
@@ -1497,7 +1499,7 @@ function showWheelResult(finalAngle) {
     resultDiv.style.textAlign = 'center';
     resultDiv.style.opacity = '0';
     resultDiv.style.transition = 'all 0.5s ease';
-    resultDiv.textContent = randomMessage;
+    resultDiv.textContent = resultMessage;
     
     document.body.appendChild(resultDiv);
     
@@ -1516,7 +1518,10 @@ function showWheelResult(finalAngle) {
                 document.body.removeChild(resultDiv);
             }
         }, 500);
-    }, 2000);
+    }, 3000);
+    
+    // Log the result for debugging
+    console.log(`Wheel landed on section ${sectionNumber} (angle: ${normalizedAngle.toFixed(1)}°)`);
 }
 
 // Initialize spin wheel when DOM is loaded
