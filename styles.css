@@ -1960,10 +1960,12 @@ body {
     border-right: 15px solid transparent;
     border-bottom: 30px solid #ff4757;
     position: absolute;
-    top: -20px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%) translateY(-180px);
     filter: drop-shadow(0 0 10px rgba(255, 71, 87, 0.8));
+    z-index: 20;
+    pointer-events: none;
 }
 
 .wheel-base {
@@ -2076,7 +2078,7 @@ body {
         border-left-width: 12px;
         border-right-width: 12px;
         border-bottom-width: 24px;
-        top: -18px;
+        transform: translate(-50%, -50%) translateY(-150px);
     }
     
     .wheel-base {
@@ -2107,7 +2109,7 @@ body {
         border-left-width: 10px;
         border-right-width: 10px;
         border-bottom-width: 20px;
-        top: -15px;
+        transform: translate(-50%, -50%) translateY(-120px);
     }
     
     .wheel-base {
