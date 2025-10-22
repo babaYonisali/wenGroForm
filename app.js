@@ -530,7 +530,7 @@ app.get('/api/coti-leaderboard', async (req, res) => {
     const transformedData = leaderboardData.map((item, index) => ({
       rank: index + 1,
       name: item.xHandle || 'Unknown',
-      mindshare: item.totalImpressions ? `${((item.totalImpressions / 180000)*100).toFixed(2)}K` : '0',
+      mindshare: item.totalImpressions ? `${((item.totalImpressions / 120000)*100).toFixed(2)}K` : '0',
       avatar: getRandomAvatar(), // Fallback emoji avatar
       profileImageUrl: item.xHandle ? getProfilePictureFallbacks(item.xHandle)[0] : null,
       profileImageFallbacks: item.xHandle ? getProfilePictureFallbacks(item.xHandle) : [],

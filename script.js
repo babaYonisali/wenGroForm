@@ -1489,21 +1489,22 @@ function createProportionalWheel(data) {
         return;
     }
     
-    // Normalize the data to reduce extreme differences
+    // Normalize the data to favor higher performers
     const impressions = data.map(entry => entry.totalImpressions || 0);
     const minImpressions = Math.min(...impressions);
     const maxImpressions = Math.max(...impressions);
     
     console.log('Raw impressions range:', minImpressions, 'to', maxImpressions);
     
-    // Apply logarithmic normalization to compress the range
+    // Apply balanced normalization that moderately favors higher performers
     const normalizedData = data.map(entry => {
         const rawValue = entry.totalImpressions || 0;
-        // Use log scale to compress differences, add 1 to avoid log(0)
-        const logValue = Math.log(rawValue + 1);
+        // Use square root for moderate advantage to higher performers
+        // This gives some advantage but not too extreme
+        const balancedValue = Math.sqrt(rawValue) + Math.sqrt(minImpressions);
         return {
             ...entry,
-            normalizedValue: logValue
+            normalizedValue: balancedValue
         };
     });
     
