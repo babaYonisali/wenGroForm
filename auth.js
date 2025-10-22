@@ -292,6 +292,10 @@ function showHome() {
     const mainContent = document.querySelector('.main-content');
     if (mainContent) mainContent.style.display = 'block';
     
+    // Hide login and form sections
+    if (xLoginSection) xLoginSection.classList.add('hidden');
+    if (userDataForm) userDataForm.classList.add('hidden');
+    
     const forumSection = document.getElementById('forumSection');
     if (forumSection) forumSection.classList.add('hidden');
     
