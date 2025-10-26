@@ -14,21 +14,12 @@ let spinWheel, spinWheelBtn;
 function initializeDOMElements() {
     spinWheel = document.getElementById('spinWheel');
     spinWheelBtn = document.getElementById('spinWheelBtn');
-    
-    console.log('DOM elements initialized:');
-    console.log('- spinWheel:', spinWheel);
-    console.log('- spinWheelBtn:', spinWheelBtn);
 }
 
 // Initialize spin wheel functionality
 function initializeSpinWheel() {
-    console.log('Initializing spin wheel...');
-    
     // Initialize DOM elements first
     initializeDOMElements();
-    
-    console.log('spinWheel element:', spinWheel);
-    console.log('spinWheelBtn element:', spinWheelBtn);
     
     // Check if elements exist
     if (!spinWheel) {
@@ -49,10 +40,7 @@ function initializeSpinWheel() {
     
     // Add click to wheel for spinning
     spinWheel.addEventListener('click', handleWheelSpin);
-    console.log('Added click listener to wheel');
-    
     spinWheelBtn.addEventListener('click', handleWheelSpin);
-    console.log('Added click listener to button');
     
     // Load leaderboard data and create proportional wheel
     loadLeaderboardForWheel();
@@ -60,7 +48,6 @@ function initializeSpinWheel() {
     // Add a safety timeout to ensure wheel is populated even if API fails silently
     setTimeout(() => {
         if (!spinWheel.style.background || spinWheel.style.background === '') {
-            console.log('Safety timeout: Wheel not populated, forcing fallback creation');
             createEqualSectionsWheel();
         }
     }, 2000);
@@ -71,26 +58,17 @@ async function loadLeaderboardForWheel(retryCount = 0, maxRetries = 3) {
     const maxDelay = 10000; // 10 seconds max delay
     
     try {
-        console.log(`Attempting to load leaderboard data for wheel... (attempt ${retryCount + 1}/${maxRetries + 1})`);
         const response = await fetch('/api/coti-leaderboard', {
             credentials: 'include'
         });
         
-        console.log('API response status:', response.status);
-        
         if (response.ok) {
             const result = await response.json();
-            console.log('API response data:', result);
             if (result.success && result.data) {
                 leaderboardData = result.data;
-                console.log('Creating proportional wheel with', result.data.length, 'entries');
                 createProportionalWheel(result.data);
                 return;
-            } else {
-                console.log('API returned success=false or no data, using fallback');
             }
-        } else {
-            console.log('API request failed with status:', response.status);
         }
     } catch (error) {
         console.error(`Error loading leaderboard for wheel (attempt ${retryCount + 1}):`, error);
@@ -99,7 +77,6 @@ async function loadLeaderboardForWheel(retryCount = 0, maxRetries = 3) {
     // If we haven't exceeded max retries, retry with exponential backoff
     if (retryCount < maxRetries) {
         const delay = Math.min(baseDelay * Math.pow(2, retryCount), maxDelay);
-        console.log(`Retrying in ${delay}ms... (attempt ${retryCount + 2}/${maxRetries + 1})`);
         
         setTimeout(() => {
             loadLeaderboardForWheel(retryCount + 1, maxRetries);
@@ -108,7 +85,6 @@ async function loadLeaderboardForWheel(retryCount = 0, maxRetries = 3) {
     }
     
     // Fallback to equal sections if all retries failed
-    console.log('All retry attempts failed, using fallback: creating equal sections wheel');
     createEqualSectionsWheel();
 }
 
@@ -122,8 +98,6 @@ function createProportionalWheel(data) {
     const impressions = data.map(entry => entry.totalImpressions || 0);
     const minImpressions = Math.min(...impressions);
     const maxImpressions = Math.max(...impressions);
-    
-    console.log('Raw impressions range:', minImpressions, 'to', maxImpressions);
     
     // Apply balanced normalization that moderately favors higher performers
     const normalizedData = data.map(entry => {
@@ -139,7 +113,6 @@ function createProportionalWheel(data) {
     
     // Calculate total normalized value
     const totalNormalized = normalizedData.reduce((sum, entry) => sum + entry.normalizedValue, 0);
-    console.log('Total normalized value:', totalNormalized);
     
     // Create proportional sections
     const sections = [];
@@ -160,7 +133,6 @@ function createProportionalWheel(data) {
             angleSize: angleSize,
             color: getSectionColor(index)
         });
-        console.log(`Section ${index + 1}: ${entry.name}, mindshare: ${entry.mindshare} (${totalImpressions} impressions, normalized: ${normalizedValue.toFixed(2)}), angle: ${currentAngle.toFixed(1)}° - ${(currentAngle + angleSize).toFixed(1)}°`);
         currentAngle += angleSize;
     });
     
@@ -172,8 +144,6 @@ function createProportionalWheel(data) {
 }
 
 function createEqualSectionsWheel() {
-    console.log('Creating equal sections wheel as fallback...');
-    
     // Fallback: create 13 equal sections
     const sections = [];
     const angleSize = 360 / 13;
@@ -189,7 +159,6 @@ function createEqualSectionsWheel() {
         });
     }
     
-    console.log('Created', sections.length, 'equal sections for fallback wheel');
     updateWheelSections(sections);
 }
 
@@ -203,8 +172,6 @@ function getSectionColor(index) {
 }
 
 function updateWheelSections(sections) {
-    console.log('Updating wheel sections:', sections);
-    
     if (!spinWheel) {
         console.error('Spin wheel element not found! Cannot update sections.');
         return;
@@ -227,20 +194,14 @@ function updateWheelSections(sections) {
     
     gradientString += ')';
     
-    console.log('Generated gradient string:', gradientString);
-    
     // Apply the gradient
     spinWheel.style.background = gradientString;
-    
-    console.log('Applied gradient to wheel');
     
     // Update section numbers positioning
     updateSectionNumbers(sections);
 }
 
 function updateSectionNumbers(sections) {
-    console.log('Updating section numbers for', sections.length, 'sections');
-    
     if (!spinWheel) {
         console.error('Spin wheel element not found! Cannot update section numbers.');
         return;
@@ -253,7 +214,6 @@ function updateSectionNumbers(sections) {
     
     // Remove existing section numbers
     const existingSections = spinWheel.querySelectorAll('.wheel-section');
-    console.log('Removing', existingSections.length, 'existing sections');
     existingSections.forEach(section => section.remove());
     
     // Add new section numbers
@@ -277,10 +237,7 @@ function updateSectionNumbers(sections) {
         sectionElement.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
         
         spinWheel.appendChild(sectionElement);
-        console.log(`Added section ${index + 1} at position (${x.toFixed(1)}, ${y.toFixed(1)})`);
     });
-    
-    console.log('Finished updating section numbers');
 }
 
 function handleWheelSpin() {
@@ -382,7 +339,6 @@ function createSpinEffects() {
 
 function showWheelResult(finalAngle) {
     if (!normalizedLeaderboardData || normalizedLeaderboardData.length === 0) {
-        console.log('No normalized leaderboard data available');
         return;
     }
     
@@ -391,7 +347,6 @@ function showWheelResult(finalAngle) {
     
     // Calculate total normalized value
     const totalNormalized = normalizedLeaderboardData.reduce((sum, entry) => sum + entry.normalizedValue, 0);
-    console.log('totalNormalized:', totalNormalized);
     
     // Find which section the angle falls into
     let currentAngle = 0;
@@ -403,8 +358,6 @@ function showWheelResult(finalAngle) {
         const sectionSize = (normalizedValue / totalNormalized) * 360;
         const sectionEnd = currentAngle + sectionSize;
         
-        console.log(`Checking section ${i + 1}: ${entry.name}, range: ${currentAngle.toFixed(1)}° - ${sectionEnd.toFixed(1)}°`);
-        
         if (normalizedAngle >= currentAngle && normalizedAngle < sectionEnd) {
             const totalImpressions = normalizedLeaderboardData.reduce((sum, e) => sum + e.totalImpressions, 0);
             winningSection = {
@@ -413,7 +366,6 @@ function showWheelResult(finalAngle) {
                 mindshare: entry.mindshare,
                 percentage: ((entry.totalImpressions / totalImpressions) * 100).toFixed(1)
             };
-            console.log('Found winning section:', winningSection);
             break;
         }
         
@@ -430,16 +382,11 @@ function showWheelResult(finalAngle) {
             mindshare: lastEntry.mindshare,
             percentage: ((lastEntry.totalImpressions / totalImpressions) * 100).toFixed(1)
         };
-        console.log('Found winning section (edge case):', winningSection);
     }
     
     if (winningSection) {
-        console.log(`Wheel landed on ${winningSection.name} (Section ${winningSection.index}, ${winningSection.percentage}% mindshare, angle: ${normalizedAngle.toFixed(1)}°)`);
-        
         // Create winning message with cool animation
         createWinningAnimation(winningSection.name);
-    } else {
-        console.log(`Could not determine winning section for angle: ${normalizedAngle.toFixed(1)}°`);
     }
 }
 
