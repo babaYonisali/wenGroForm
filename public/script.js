@@ -1,6 +1,13 @@
 // Main Application Script
 // Coordinates all modules and handles shared functionality
 
+// ✅ SECURITY: Sanitize HTML to prevent XSS
+function sanitizeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 // Make showNotification available globally for other modules
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
@@ -119,7 +126,7 @@ async function showForum() {
     if (currentUserSpan && window.AuthModule) {
         const userData = window.AuthModule.getUserData();
         if (userData) {
-            currentUserSpan.textContent = `Welcome, @${userData.username}!`;
+            currentUserSpan.textContent = `Welcome, @${sanitizeHTML(userData.username)}!`;
         }
     }
     
@@ -188,15 +195,20 @@ function displayAllUsers(users) {
         const userClass = isCurrentUser ? 'user-author' : 'message-author';
         const highlight = isCurrentUser ? '⭐ ' : '';
         
+        // ✅ SECURITY: Sanitize all user input to prevent XSS
+        const safeXHandle = sanitizeHTML(user.xHandle);
+        const safeTelegramHandle = sanitizeHTML(user.telegramHandle);
+        const safeXHandleReferral = user.xHandleReferral ? sanitizeHTML(user.xHandleReferral) : null;
+        
         html += `
             <div class="message">
                 <div class="message-header">
-                    <span class="${userClass}">${highlight}@${user.xHandle}</span>
-                    <span class="message-time">${joinDate}</span>
+                    <span class="${userClass}">${highlight}@${safeXHandle}</span>
+                    <span class="message-time">${sanitizeHTML(joinDate)}</span>
                 </div>
                 <div class="message-content">
-                    TG: ${user.telegramHandle}
-                    ${user.xHandleReferral ? `<br>REF: ${user.xHandleReferral.startsWith('@') ? user.xHandleReferral : '@' + user.xHandleReferral}` : ''}
+                    TG: ${safeTelegramHandle}
+                    ${safeXHandleReferral ? `<br>REF: ${safeXHandleReferral.startsWith('@') ? safeXHandleReferral : '@' + safeXHandleReferral}` : ''}
                     ${user.hasKaitoYaps ? `<br>KY: Yes` : ''}
                 </div>
             </div>

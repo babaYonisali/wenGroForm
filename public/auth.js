@@ -309,7 +309,7 @@ function showHome() {
     // Show home section
     if (homeSection) homeSection.classList.remove('hidden');
     
-    // Update user info
+    // Update user info - using textContent is safe (it escapes automatically)
     if (homeCurrentUserSpan && xUserData) {
         homeCurrentUserSpan.textContent = `Welcome, @${xUserData.username}!`;
     }

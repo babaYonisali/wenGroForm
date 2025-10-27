@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieSession = require('cookie-session');
 const { TwitterApi } = require('twitter-api-v2');
+const { storeToken, getToken, deleteToken } = require('./server-state');
 
 const app = express();
 
@@ -55,6 +56,14 @@ connectDB();
 const User = require('./models/User');
 const Submission = require('./models/Submission');
 const CotiSubmission = require('./models/CotiSubmission');
+
+// ---------- Middleware: Authentication ----------
+function requireAuth(req, res, next) {
+  if (!req.session.user || !req.session.user.xHandle) {
+    return res.status(401).json({ success: false, message: 'Not authenticated' });
+  }
+  next();
+}
 
 // ---------- Helpers ----------
 function getTwitterClient() {
@@ -133,13 +142,16 @@ app.get('/auth/x/callback', async (req, res) => {
       return res.status(400).send('Could not read X handle');
     }
 
-    // Save an auth session (serverless friendly cookie)
-    req.session.user = {
-      xHandle,
+    // Store tokens server-side for security
+    storeToken(xHandle, {
       accessToken,
       refreshToken,
       expiresAt: Date.now() + (expiresIn * 1000),
-    };
+    });
+
+    // Clear OAuth temporary data and only store xHandle (safe)
+    req.session.oauth = null;
+    req.session.user = { xHandle };
 
     // Determine the frontend URL based on the callback URL used
     const isProduction = redirectUri.includes('community.wengro.com');
@@ -175,12 +187,16 @@ app.get('/api/me', async (req, res) => {
 
 // 4) Logout
 app.post('/auth/logout', (req, res) => {
+  if (req.session.user && req.session.user.xHandle) {
+    deleteToken(req.session.user.xHandle); // Delete server-side tokens
+  }
   req.session = null;
   res.json({ success: true });
 });
 
 // ---------- Your existing routes ----------
-app.get('/api/users', async (req, res) => {
+// ✅ SECURED: Only authenticated users can see the user list
+app.get('/api/users', requireAuth, async (req, res) => {
   try {
     const users = await User.find().sort({ joinTime: -1 });
     res.json({ success: true, data: users });
@@ -244,7 +260,8 @@ app.get('/api', (req, res) => {
     }
   });
 });
-app.get('/api/users/:xHandle', async (req, res) => {
+// ✅ SECURED: Only authenticated users can see individual user data
+app.get('/api/users/:xHandle', requireAuth, async (req, res) => {
     try {
         const user = await User.findOne({ xHandle: req.params.xHandle });
         if (user) {
@@ -255,10 +272,6 @@ app.get('/api/users/:xHandle', async (req, res) => {
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error' });
     }
-});
-app.post('/auth/logout', (req, res) => {
-    req.session = null;
-    res.json({ success: true, message: 'Logged out successfully' });
 });
 
 // Thread submission endpoints
