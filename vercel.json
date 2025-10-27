@@ -4,22 +4,6 @@
     {
       "src": "app.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.css",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "*.jpg",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -32,12 +16,11 @@
       "dest": "/app.js"
     },
     {
-      "src": "/",
-      "dest": "/public/index.html"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/public/$1"
+      "dest": "/app.js"
     }
   ]
 } 

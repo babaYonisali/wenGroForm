@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieSession = require('cookie-session');
+const path = require('path');
 const { TwitterApi } = require('twitter-api-v2');
 const { storeToken, getToken, deleteToken } = require('./server-state');
 
@@ -35,8 +36,8 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
-app.use(express.static('./public'));  // ✅ Only serve client-side files
-// Note: Removed /assets route as assets folder doesn't exist
+// ✅ Only serve client-side files - use absolute path for Vercel compatibility
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Secure, signed cookie session that works on Vercel
 app.use(cookieSession({
@@ -244,7 +245,7 @@ app.post('/api/users', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/api', (req, res) => {
