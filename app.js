@@ -34,8 +34,8 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
-app.use(express.static('./'));
-app.use('/assets', express.static(__dirname + '/assets'));
+app.use(express.static('./public'));  // ✅ Only serve client-side files
+// Note: Removed /assets route as assets folder doesn't exist
 
 // Secure, signed cookie session that works on Vercel
 app.use(cookieSession({
@@ -228,7 +228,7 @@ app.post('/api/users', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/public/index.html');
 });
 
 app.get('/api', (req, res) => {
