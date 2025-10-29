@@ -94,6 +94,13 @@ function initializeApp() {
         console.error('SpinWheelModule not found!');
     }
     
+    if (window.WalletModule) {
+        console.log('Initializing WalletModule...');
+        window.WalletModule.initializeWalletModule();
+    } else {
+        console.error('WalletModule not found!');
+    }
+    
     // Add shared event listeners
     if (communityBtn) communityBtn.addEventListener('click', showForum);
     if (backToHomeBtn) backToHomeBtn.addEventListener('click', () => {

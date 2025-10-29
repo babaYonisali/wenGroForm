@@ -196,6 +196,48 @@ app.post('/auth/logout', (req, res) => {
 });
 
 // ---------- Your existing routes ----------
+// ---------- Wallet connect (MetaMask) ----------
+app.post('/api/wallet/connect', requireAuth, async (req, res) => {
+  try {
+    const xHandle = req.session.user.xHandle;
+    let { walletAddress } = req.body || {};
+
+    if (!walletAddress || typeof walletAddress !== 'string') {
+      return res.status(400).json({ success: false, message: 'walletAddress is required' });
+    }
+
+    walletAddress = walletAddress.toLowerCase();
+
+    // Basic address validation (EVM)
+    if (!walletAddress.startsWith('0x') || walletAddress.length !== 42) {
+      return res.status(400).json({ success: false, message: 'Invalid wallet address' });
+    }
+
+    const user = await User.findOne({ xHandle });
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // If already connected previously, do not overwrite
+    if (user.walletAddress) {
+      const alreadyConnected = user.walletAddress.toLowerCase() === walletAddress;
+      return res.json({ success: true, alreadyConnected: true, walletAddress: user.walletAddress, message: alreadyConnected ? 'Wallet already linked' : 'Wallet already linked to this user' });
+    }
+
+    user.walletAddress = walletAddress;
+    await user.save();
+
+    res.status(201).json({ success: true, walletAddress, message: 'Wallet linked successfully' });
+  } catch (error) {
+    // Handle potential unique constraint violations (duplicate wallet across users)
+    if (error && error.code === 11000) {
+      return res.status(409).json({ success: false, message: 'This wallet is already linked to another account' });
+    }
+    console.error('Error linking wallet:', error);
+    res.status(500).json({ success: false, message: 'Error linking wallet' });
+  }
+});
+
 // ✅ SECURED: Only authenticated users can see the user list
 app.get('/api/users', requireAuth, async (req, res) => {
   try {
